@@ -1,0 +1,51 @@
+{
+  "schemaVersion": 1,
+  "id": "appendages",
+  "version": "${version}",
+  "name": "Appendages",
+  "description": "Things for your player model. Spiritual successor to Tails by Kiriha and others. By and for furries ;)",
+
+  "authors": [
+    {
+      "name": "quaternary",
+      "role": "porter",
+      "contact": {
+        "mastodon": "https://cybre.space/@quat"
+      }
+    },
+    {
+      "name": "Kiriha",
+      "role": "former_author"
+    },
+    {
+      "name": "TTFTCUTS",
+      "role": "former_author"
+    },
+    {
+      "name": "RiskyKen",
+      "role": "contributor"
+    }
+  ],
+  "_____comment": "dear anyone diving in the fabric.mod.json: 'role' is nonstandard in authors blocks, but i like it, maybe it can be standardized some day",
+
+  "contact": {
+    "homepage": "https://highlysuspect.agency",
+    "sources": "https://github.com/quat1024/appendages"
+  },
+  "license": "MIT",
+  "icon": "assets/appendages/icon.png",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "agency.highlysuspect.appendages.Init"
+    ]
+  },
+  "mixins": [
+    "appendages.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.7.8+build.187",
+    "fabric": "*",
+    "minecraft": "1.15.2"
+  }
+}

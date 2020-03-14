@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "agency.highlysuspect.appendages.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "client": [
+    "PlayerEntityRendererMixin",
+    "LivingEntityRendererMixin",
+    "ModelPartMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

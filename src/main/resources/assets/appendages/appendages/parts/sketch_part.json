@@ -1,0 +1,41 @@
+{
+  "__note": "probably will end up being deleted, just testing out the structure",
+  "id": "json_sketch",
+  "artist": "quaternary",
+  "model": "models/kjsfhlsjkdhfkljdsfhgkljdshgkdf",
+
+  "__note2": "everything below winds up as the *default* options when you place this part in the editor",
+
+  "defaults": {
+    "__note3": "body_part and mount_point combine to select a default location for the appendage",
+    "body_part": "head",
+    "mount_point": "top",
+
+    "texture": [
+      "blah/blah",
+      "other/texture/suggestions"
+    ],
+    "offset": [
+      69,
+      420,
+      621
+    ],
+    "rotation": [
+      0,
+      0,
+      0
+    ],
+    "scale": [
+      1,
+      1,
+      1
+    ],
+
+    "__note4": "idk, the ones with a # refer to elements of the color palette mechanic",
+    "color": [
+      "#1",
+      "#2",
+      [0, 255, 0]
+    ]
+  }
+}
