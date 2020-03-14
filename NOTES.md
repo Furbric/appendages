@@ -52,3 +52,53 @@ How to translate to draw an appendage:
 * First, translate to the center of the body part. Rotate to align with it.
 * Then, translate and rotate according to the directions given by the mount point (hardcoded into the mod)
 * Then, translate, rotate, and scale with the user-defined offsets from that mount point.
+
+# Notes.md "At Work With Nothing Better To Do" edition
+
+ok so basically i am derg
+
+## Symmetry, again
+
+* Models only include one wing, one ear, one horn etc
+* There's a "symmetry" option, checked by default on items where it makes sense, that adds a mirrored duplicate version
+* Changes made to the original model reflect across the vertical axis
+* UI option to enable symmetry when it's not
+* UI option to disable symmetry when it is - two choices, remove the mirrored element or make it an actual duplicate object
+
+## Textures
+
+How many color channels are available for tinting is a property of the texture
+
+Should you be able to choose textures not intended for use on an appendage, like the stone texture? Probably not. if you can that's low priority af
+
+Think about this more.
+
+## Models
+
+There's the crazy model format that Tails uses, that appears to have animation support etc.
+
+Would also be nice to support block and item models. Probably not too difficult to, useful for testing as well.
+
+## All the configurable options
+
+For each outfit:
+
+* the color palette (just a list of rgbas)
+* MAYYYYYBE an alternate skin (so you can use a different skin designed with the apps in mind)
+
+For each appendage:
+
+* mount point (body part + point)
+* positional offset
+* rotational offset
+* scale (x/y/z? or just a scalar)
+* texture
+* colors (either adhoc rgbas, or references into the color palette)
+* bilateral symmetry checkbox
+* "extras"
+  * animation speed?
+  * hide under armor?
+  * for wing-like things, hide when using elytra (ooo, or hide the elytra instead)
+  * show when invisible?
+
+App types come with default options specified in json, when you add an app it loads those options.
