@@ -1,7 +1,7 @@
 Appendages
 ==========
 
-This is a spiritual successor to [Tails, by Kiriha et al.](https://github.com/kihira/Tails), for Fabric 1.15 and hopefully snapshots too. It borrows a lot of code from Tails and like, let's be honest, I didn't do most of the work.
+This is a spiritual successor to [Tails, by Kihira et al.](https://github.com/kihira/Tails), for Fabric 1.15 and hopefully snapshots too. It borrows a lot of code from Tails and like, let's be honest, I didn't do most of the work.
 
 You know the drill by now - it adds 3d models to glue to your player skin. Useful for like, I dunno, sonas and stuff.
 
