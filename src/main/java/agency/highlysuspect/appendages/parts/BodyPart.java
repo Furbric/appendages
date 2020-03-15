@@ -4,9 +4,12 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.util.math.Vector3f;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.Collection;
+import java.util.function.BiConsumer;
 
 public enum BodyPart {
 	HEAD, TORSO, RIGHT_ARM, LEFT_ARM, RIGHT_LEG, LEFT_LEG,
@@ -27,17 +30,48 @@ public enum BodyPart {
 	private static final Multimap<BodyPart, MountPoint> mountsByPart = HashMultimap.create();
 	
 	static {
-		//TODO position and rotate ALLLLLL of these
-		//needs to know about the dimensions of each box, in order to automatically do it (check the player model sizes)
-		//maybe more points if they are needed
+		//N.B. Cuboid coordinates are in "minecraft pixels" (so, the head is 8 cuboid units tall)
+		//When rendering the actual cuboid, they are divided by 16.
+		//So when I translate along the cuboid's rendered position, I also need to divide by 16.
 		for(BodyPart part : values()) {
-			mountsByPart.put(part, new MountPoint(part, "origin", new Vec3d(0, 0, 0), new Vec3d(0, 0, 0)));
-			mountsByPart.put(part, new MountPoint(part, "top", null, null));
-			mountsByPart.put(part, new MountPoint(part, "bottom", null, null));
-			mountsByPart.put(part, new MountPoint(part, "left", null, null));
-			mountsByPart.put(part, new MountPoint(part, "right", null, null));
-			mountsByPart.put(part, new MountPoint(part, "front", null, null));
-			mountsByPart.put(part, new MountPoint(part, "back", null, null));
+			mountsByPart.put(part, new MountPoint(part, "origin", (cuboid, stack) -> {
+				//average the x, y, and z coordinates to go to the center of the cuboid
+				stack.translate((cuboid.minX + cuboid.maxX) / 32f, (cuboid.minY + cuboid.maxY) / 32f, (cuboid.minZ + cuboid.maxZ) / 32f);
+			}));
+			mountsByPart.put(part, new MountPoint(part, "top", (cuboid, stack) -> {
+				//average the x and z coordinates, but use the top y coordinate
+				stack.translate((cuboid.minX + cuboid.maxX) / 32f, cuboid.minY / 16f, (cuboid.minZ + cuboid.maxZ) / 32f);
+			}));
+			mountsByPart.put(part, new MountPoint(part, "bottom", (cuboid, stack) -> {
+				//average the x and z coordinates, but use the bottom y coordinate
+				stack.translate((cuboid.minX + cuboid.maxX) / 32f, cuboid.maxY / 16f, (cuboid.minZ + cuboid.maxZ) / 32f);
+				stack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(180));
+			}));
+			
+			MountPoint left, right;
+			mountsByPart.put(part, left = new MountPoint(part, "left", (cuboid, stack) -> {
+				//average the y and z coordinates, but use the left x coordinate
+				stack.translate(cuboid.maxX / 16f, (cuboid.minY + cuboid.maxY) / 32f, (cuboid.minZ + cuboid.maxZ) / 32f);
+				stack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(90));
+			}));
+			mountsByPart.put(part, right = new MountPoint(part, "right", (cuboid, stack) -> {
+				//average the y and z coordinates, but use the right x coordinate
+				stack.translate(cuboid.minX / 16f, (cuboid.minY + cuboid.maxY) / 32f, (cuboid.minZ + cuboid.maxZ) / 32f);
+				stack.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion(-90));
+			}));
+			left.mirrored = right;
+			right.mirrored = left;
+			
+			mountsByPart.put(part, new MountPoint(part, "front", (cuboid, stack) -> {
+				//average the x and y coordinates, but use the front z coordinate
+				stack.translate((cuboid.minX + cuboid.maxX) / 32f, (cuboid.minY + cuboid.maxY) / 32f, cuboid.minZ / 16f);
+				stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(90));
+			}));
+			mountsByPart.put(part, new MountPoint(part, "back", (cuboid, stack) -> {
+				//average the x and y coordinates, but use the back z coordinate
+				stack.translate((cuboid.minX + cuboid.maxX) / 32f, (cuboid.minY + cuboid.maxY) / 32f, cuboid.maxZ / 16f);
+				stack.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion(-90));
+			}));
 		}
 	}
 	
@@ -45,17 +79,36 @@ public enum BodyPart {
 		return mountsByPart.get(this);
 	}
 	
+	public MountPoint getMountPointByName(String name) {
+		return getAvailableMountPoints().stream().filter(point -> point.name.equals(name)).findFirst().get();
+	}
+	
 	public static class MountPoint {
-		private MountPoint(BodyPart part, String name, Vec3d positionOffset, Vec3d rotationOffset) {
-			this.part = part;
+		private MountPoint(BodyPart bodyPart, String name, BiConsumer<ModelPart.Cuboid, MatrixStack> setupFunc) {
+			this.bodyPart = bodyPart;
 			this.name = name;
-			this.positionOffset = positionOffset;
-			this.rotationOffset = rotationOffset;
+			this.setupFunc = setupFunc;
 		}
 		
-		public final BodyPart part;
-		public final String name;
-		public final Vec3d positionOffset;
-		public final Vec3d rotationOffset;
+		private final BodyPart bodyPart;
+		private final String name;
+		private final BiConsumer<ModelPart.Cuboid, MatrixStack> setupFunc;
+		private MountPoint mirrored = this;
+		
+		public BodyPart getBodyPart() {
+			return bodyPart;
+		}
+		
+		public String getName() {
+			return name;
+		}
+		
+		public void applyTransform(ModelPart.Cuboid cuboid, MatrixStack stack) {
+			setupFunc.accept(cuboid, stack);
+		}
+		
+		public MountPoint getMirrored() {
+			return mirrored;
+		}
 	}
 }

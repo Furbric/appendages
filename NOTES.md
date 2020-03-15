@@ -53,6 +53,8 @@ How to translate to draw an appendage:
 * Then, translate and rotate according to the directions given by the mount point (hardcoded into the mod)
 * Then, translate, rotate, and scale with the user-defined offsets from that mount point.
 
+Note from trying to implement this: it's not possible to hardcode offsets from cuboid origin -> mount point, mainly because player models have two possibilities for arm sizes, totally forgot about that. More likely I'll need to write a method on the mount point that takes in a cuboid and does the transformations for you.
+
 # Notes.md "At Work With Nothing Better To Do" edition
 
 ok so basically i am derg
@@ -63,7 +65,9 @@ ok so basically i am derg
 * There's a "symmetry" option, checked by default on items where it makes sense, that adds a mirrored duplicate version
 * Changes made to the original model reflect across the vertical axis
 * UI option to enable symmetry when it's not
-* UI option to disable symmetry when it is - two choices, remove the mirrored element or make it an actual duplicate object
+* UI option to disable symmetry when it is - two choices, remove the mirrored element or make it an actual duplicate object (flattening)
+
+After trying to implement this: Symmetry should probably remain a UI concept and not an appendage concept (apart from something basic like apps having a logical "parent"). Things get hairy when trying to make getters and setters transparently update the mirror image, for example
 
 ## Textures
 
