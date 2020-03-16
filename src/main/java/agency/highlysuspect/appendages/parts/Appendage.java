@@ -60,6 +60,7 @@ public class Appendage {
 		this.rotationOffset = rotationOffset;
 	}
 	
+	//more like scalie, am i right
 	public Vec3d getScale() {
 		return scale;
 	}
@@ -70,6 +71,7 @@ public class Appendage {
 	
 	public Appendage copy() {
 		Appendage copy = new Appendage();
+		
 		copy.mountPoint = mountPoint;
 		copy.texture = texture;
 		copy.colors = colors;
@@ -78,6 +80,17 @@ public class Appendage {
 		copy.scale = scale;
 		
 		return copy;
+	}
+	
+	public Appendage mirrored() {
+		Appendage mirror = copy();
+		
+		mirror.positionOffset = mirror.positionOffset.multiply(-1, 1, 1);
+		mirror.rotationOffset = mirror.rotationOffset.multiply(1, -1, -1);
+		mirror.scale = mirror.scale.multiply(-1, 1, -1);
+		mirror.mountPoint = mirror.mountPoint.getMirrored();
+		
+		return mirror;
 	}
 	
 	public static class Builder {
