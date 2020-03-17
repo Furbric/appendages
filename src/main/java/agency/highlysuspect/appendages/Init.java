@@ -12,4 +12,13 @@ public class Init implements ClientModInitializer {
 	public void onInitializeClient() {
 		//brap
 	}
+	
+	private static long lastLogTime = 0;
+	public static void logSometimes(String asd) {
+		long now = System.currentTimeMillis();
+		if(now - lastLogTime > 500L) {
+			lastLogTime = now;
+			LOGGER.info(asd);
+		}
+	}
 }

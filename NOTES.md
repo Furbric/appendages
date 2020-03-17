@@ -92,14 +92,16 @@ For each outfit:
 
 For each appendage:
 
-* mount point (body part + point)
-* positional offset
-* rotational offset
-* scale (x/y/z? or just a scalar)
+* position
+    * mount point (body part + point)
+    * positional offset
+    * rotational offset
+    * scale (x/y/z? or just a scalar)
+    * bilateral symmetry checkbox
 * texture
-* colors (either adhoc rgbas, or references into the color palette)
-* bilateral symmetry checkbox
-* "extras"
+    * texture
+    * colors (either adhoc rgbas, or references into the color palette)
+* extras
   * animation speed?
   * hide under armor?
   * for wing-like things, hide when using elytra (ooo, or hide the elytra instead)

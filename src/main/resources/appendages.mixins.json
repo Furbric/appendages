@@ -5,7 +5,8 @@
   "client": [
     "PlayerEntityRendererMixin",
     "LivingEntityRendererMixin",
-    "ModelPartMixin"
+    "ModelPartMixin",
+    "GameMenuScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 1
