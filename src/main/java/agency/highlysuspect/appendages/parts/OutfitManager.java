@@ -1,18 +1,21 @@
 package agency.highlysuspect.appendages.parts;
 
 import agency.highlysuspect.appendages.Init;
-import net.minecraft.client.MinecraftClient;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 
 public class OutfitManager {
+	static boolean asdfghjkl = true;
+	
 	public static Outfit getOutfitFor(PlayerEntity player) {
 		//return null; //TODO Stub
 		
 		AppendageType asdfjkl = new AppendageType(new Identifier(Init.MODID, "test_type"), "quaternary");
 		
-		Outfit test = new Outfit();
+		Outfit test = new Outfit("yeet");
 		
 		Appendage breadWing = new Appendage.Builder()
 			.setType(asdfjkl)
@@ -55,6 +58,12 @@ public class OutfitManager {
 			.setScale(new Vec3d(0.3, 1.5, 1))
 			.build()
 		);
+		
+		if(asdfghjkl) {
+			Gson gson = new GsonBuilder().setPrettyPrinting().create();
+			Init.LOGGER.info(gson.toJson(test.toJson()));
+			asdfghjkl = false;
+		}
 		
 		return test;
 	}

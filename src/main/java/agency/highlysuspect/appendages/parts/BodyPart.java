@@ -1,5 +1,7 @@
 package agency.highlysuspect.appendages.parts;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
@@ -130,6 +132,13 @@ public enum BodyPart {
 			} else if(name.equals("right")) {
 				return mirroredPart.getMountPointByName("left");
 			} else return mirroredPart.getMountPointByName(name);
+		}
+		
+		public JsonElement toJson() {
+			JsonObject j = new JsonObject();
+			j.addProperty("body_part", bodyPart.name());
+			j.addProperty("mount_point", getName());
+			return j;
 		}
 	}
 }

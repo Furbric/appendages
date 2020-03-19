@@ -1,17 +1,16 @@
 package agency.highlysuspect.appendages.parts;
 
-import agency.highlysuspect.appendages.parts.color.AppendageColor;
-import agency.highlysuspect.appendages.render.AppendageTexture;
+import agency.highlysuspect.appendages.parts.color.ColorPalette;
+import agency.highlysuspect.appendages.util.JsonUtil;
 import com.google.common.base.Preconditions;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import net.minecraft.util.math.Vec3d;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Appendage {
 	private AppendageType type; //defines the model
-	private AppendageTexture texture;
-	private List<AppendageColor> colors = new ArrayList<>();
+	private AppendageTexture texture = new AppendageTexture(); //TODO remove constructor
+	private ColorPalette texturePalette = new ColorPalette(3); //TODO remove constructor
 	
 	//Maybe these can be merged into one transformation matrix? but this isn't the place to do it
 	//just a note for later...
@@ -72,9 +71,11 @@ public class Appendage {
 	public Appendage copy() {
 		Appendage copy = new Appendage();
 		
-		copy.mountPoint = mountPoint;
+		copy.type = type;
 		copy.texture = texture;
-		copy.colors = colors;
+		copy.texturePalette = texturePalette;
+		
+		copy.mountPoint = mountPoint;
 		copy.positionOffset = positionOffset;
 		copy.rotationOffset = rotationOffset;
 		copy.scale = scale;
@@ -132,5 +133,20 @@ public class Appendage {
 			Preconditions.checkNotNull(build.mountPoint, "no mount point");
 			return build;
 		}
+	}
+	
+	public JsonElement toJson() {
+		JsonObject j = new JsonObject();
+		
+		j.add("type", type.toJson());
+		j.add("texture", texture.toJson());
+		j.add("palette", texturePalette.toJson());
+		j.add("mount_point", mountPoint.toJson());
+		
+		j.add("position", JsonUtil.vec3dToArray(positionOffset));
+		j.add("rotation", JsonUtil.vec3dToArray(rotationOffset));
+		j.add("scale", JsonUtil.vec3dToArray(scale));
+		
+		return j;
 	}
 }
