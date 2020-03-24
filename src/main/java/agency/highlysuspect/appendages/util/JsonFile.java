@@ -1,9 +1,6 @@
 package agency.highlysuspect.appendages.util;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.minecraft.util.FileNameUtil;
 
 import java.io.IOException;
@@ -20,7 +17,7 @@ public class JsonFile {
 	}
 	
 	private Path path;
-	private JsonObject json;
+	private JsonElement json;
 	
 	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	
@@ -32,11 +29,11 @@ public class JsonFile {
 		this.path = path;
 	}
 	
-	public JsonObject getJson() {
+	public JsonElement getJson() {
 		return json;
 	}
 	
-	public void setJson(JsonObject json) {
+	public void setJson(JsonElement json) {
 		this.json = json;
 	}
 	
@@ -44,7 +41,7 @@ public class JsonFile {
 		Files.write(path, GSON.toJson(json).getBytes(StandardCharsets.UTF_8));
 	}
 	
-	public void read() throws IOException {
+	public void readAsJsonObject() throws IOException {
 		json = new JsonParser().parse(Files.newBufferedReader(path)).getAsJsonObject();
 	}
 	
@@ -55,7 +52,7 @@ public class JsonFile {
 		
 		private final Path base;
 		
-		public JsonFile newFile(String name) throws IOException {
+		public JsonFile newFileWithPreferredFilename(String name) throws IOException {
 			return new JsonFile(Paths.get(sanitizeFilename(name)));
 		}
 		

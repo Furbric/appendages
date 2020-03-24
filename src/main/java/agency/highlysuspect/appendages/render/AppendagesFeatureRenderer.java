@@ -33,7 +33,7 @@ public class AppendagesFeatureRenderer<T extends PlayerEntity> extends FeatureRe
 		//noinspection ConstantConditions (it's a stubbed method)
 		if(outfit == null) return;
 		
-		outfit.forEachAppendage(appendage -> {
+		outfit.getAppendages().forEach(appendage -> {
 			matrices.push();
 			
 			/////Coordinate Setup
@@ -53,12 +53,11 @@ public class AppendagesFeatureRenderer<T extends PlayerEntity> extends FeatureRe
 			Vec3d userTranslate = appendage.getPositionOffset();
 			matrices.translate(userTranslate.x / 16f, userTranslate.y / 16f, userTranslate.z / 16f);
 			
-			//I DONT KNOW WHAT IM DOING
 			Vec3d userRotate = appendage.getRotationOffset();
-			//actually apply it lol (it's pitch/yaw/roll)
+			//Yaw first, then pitch, then roll - no particular reason, this just feels the most intuitive for rotating parts
+			//If I used something like quaternions, maybe this wouldn't be needed (TODO maybe look into that), but oh god the UI
 			matrices.multiply(Vector3f.POSITIVE_Y.getDegreesQuaternion((float) userRotate.y));
 			matrices.multiply(Vector3f.POSITIVE_X.getDegreesQuaternion((float) userRotate.x));
-			
 			matrices.multiply(Vector3f.POSITIVE_Z.getDegreesQuaternion((float) userRotate.z));
 			
 			Vec3d userScale = appendage.getScale();

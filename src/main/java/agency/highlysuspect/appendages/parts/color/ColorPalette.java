@@ -1,8 +1,10 @@
 package agency.highlysuspect.appendages.parts.color;
 
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 
 public class ColorPalette {
 	public ColorPalette(int size) {
@@ -10,7 +12,7 @@ public class ColorPalette {
 		
 		colors = new AppendageColor[size];
 		for(int i = 0; i < size; i++) {
-			colors[i] = new AppendageColor.Unset();
+			colors[i] = new AppendageColor().unset();
 		}
 	}
 	
@@ -28,18 +30,23 @@ public class ColorPalette {
 	public JsonElement toJson() {
 		JsonArray array = new JsonArray();
 		
-		for (int id = 0; id < size; id++) {
-			AppendageColor c = colors[id];
-			if(c instanceof AppendageColor.JsonSerializable) {
-				JsonObject entry = new JsonObject();
-				
-				entry.addProperty("id", id);
-				entry.add("color", ((AppendageColor.JsonSerializable)c).toJson());
-				
-				array.add(entry);
-			}
+		for (AppendageColor color : colors) {
+			array.add(color.toJson());
 		}
 		
 		return array;
+	}
+	
+	public static ColorPalette fromJson(JsonElement je) throws JsonParseException {
+		JsonArray array = JsonHelper2.ensureType(je, JsonArray.class);
+		
+		int size = array.size();
+		ColorPalette palette = new ColorPalette(size);
+		
+		for (int i = 0; i < array.size(); i++) {
+			palette.setColor(i, AppendageColor.fromJson(array.get(i)));
+		}
+		
+		return palette;
 	}
 }

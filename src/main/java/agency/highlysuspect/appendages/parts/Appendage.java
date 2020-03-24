@@ -1,16 +1,16 @@
 package agency.highlysuspect.appendages.parts;
 
-import agency.highlysuspect.appendages.parts.color.ColorPalette;
-import agency.highlysuspect.appendages.util.JsonUtil;
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.common.base.Preconditions;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.util.math.Vec3d;
 
 public class Appendage {
 	private AppendageType type; //defines the model
-	private AppendageTexture texture = new AppendageTexture(); //TODO remove constructor
-	private ColorPalette texturePalette = new ColorPalette(3); //TODO remove constructor
+	private AppendageTexture texture;
 	
 	//Maybe these can be merged into one transformation matrix? but this isn't the place to do it
 	//just a note for later...
@@ -23,40 +23,45 @@ public class Appendage {
 		return type;
 	}
 	
-	public void setType(AppendageType type) {
+	public Appendage setType(AppendageType type) {
 		this.type = type;
+		return this;
 	}
 	
 	public AppendageTexture getTexture() {
 		return texture;
 	}
 	
-	public void setTexture(AppendageTexture texture) {
+	public Appendage setTexture(AppendageTexture texture) {
 		this.texture = texture;
+		return this;
 	}
 	
 	public BodyPart.MountPoint getMountPoint() {
 		return mountPoint;
 	}
 	
-	public void setMountPoint(BodyPart.MountPoint mountPoint) {
+	public Appendage setMountPoint(BodyPart.MountPoint mountPoint) {
 		this.mountPoint = mountPoint;
+		return this;
 	}
 	
 	public Vec3d getPositionOffset() {
 		return positionOffset;
 	}
 	
-	public void setPositionOffset(Vec3d positionOffset) {
+	public Appendage setPositionOffset(Vec3d positionOffset) {
 		this.positionOffset = positionOffset;
+		return this;
 	}
 	
 	public Vec3d getRotationOffset() {
 		return rotationOffset;
 	}
 	
-	public void setRotationOffset(Vec3d rotationOffset) {
+	public Appendage setRotationOffset(Vec3d rotationOffset) {
 		this.rotationOffset = rotationOffset;
+		return this;
 	}
 	
 	//more like scalie, am i right
@@ -64,8 +69,16 @@ public class Appendage {
 		return scale;
 	}
 	
-	public void setScale(Vec3d scale) {
+	public Appendage setScale(Vec3d scale) {
 		this.scale = scale;
+		return this;
+	}
+	
+	public Appendage vibeCheck() {
+		Preconditions.checkNotNull(type, "null type!");
+		//Preconditions.checkNotNull(texture, "null texture!"); //TODO uncomment when textures are here
+		Preconditions.checkNotNull(mountPoint, "null mount point!");
+		return this;
 	}
 	
 	public Appendage copy() {
@@ -73,7 +86,6 @@ public class Appendage {
 		
 		copy.type = type;
 		copy.texture = texture;
-		copy.texturePalette = texturePalette;
 		
 		copy.mountPoint = mountPoint;
 		copy.positionOffset = positionOffset;
@@ -94,59 +106,32 @@ public class Appendage {
 		return mirror;
 	}
 	
-	public static class Builder {
-		private final Appendage build = new Appendage();
-		
-		public Builder setType(AppendageType type) {
-			build.setType(type);
-			return this;
-		}
-		
-		public Builder setTexture(AppendageTexture texture) {
-			build.setTexture(texture);
-			return this;
-		}
-		
-		public Builder setMountPoint(BodyPart.MountPoint mountPoint) {
-			build.setMountPoint(mountPoint);
-			return this;
-		}
-		
-		public Builder setPositionOffset(Vec3d position) {
-			build.setPositionOffset(position);
-			return this;
-		}
-		
-		public Builder setRotationOffset(Vec3d rotation) {
-			build.setRotationOffset(rotation);
-			return this;
-		}
-		
-		public Builder setScale(Vec3d scale) {
-			build.setScale(scale);
-			return this;
-		}
-		
-		public Appendage build() {
-			Preconditions.checkNotNull(build.type, "no type");
-			//TODO uncomment Preconditions.checkNotNull(build.texture, "no texture");
-			Preconditions.checkNotNull(build.mountPoint, "no mount point");
-			return build;
-		}
-	}
-	
 	public JsonElement toJson() {
 		JsonObject j = new JsonObject();
 		
 		j.add("type", type.toJson());
-		j.add("texture", texture.toJson());
-		j.add("palette", texturePalette.toJson());
+		//j.add("texture", texture.toJson()); //TODO uncomment when textures are here
 		j.add("mount_point", mountPoint.toJson());
 		
-		j.add("position", JsonUtil.vec3dToArray(positionOffset));
-		j.add("rotation", JsonUtil.vec3dToArray(rotationOffset));
-		j.add("scale", JsonUtil.vec3dToArray(scale));
+		j.add("position", JsonHelper2.vec3dToArray(positionOffset));
+		j.add("rotation", JsonHelper2.vec3dToArray(rotationOffset));
+		j.add("scale", JsonHelper2.vec3dToArray(scale));
 		
 		return j;
+	}
+	
+	public static Appendage fromJson(JsonElement je) throws JsonParseException {
+		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
+		Appendage a = new Appendage();
+		
+		a.setType(AppendageType.fromJson(j.get("type")));
+		//a.setTexture(AppendageTexture.fromJson(j.get("texture"))); //TODO uncomment when textures are here
+		a.setMountPoint(BodyPart.MountPoint.fromJson(j.get("mount_point")));
+		
+		a.setPositionOffset(JsonHelper2.getVec3d(j, "position"));
+		a.setRotationOffset(JsonHelper2.getVec3d(j, "rotation"));
+		a.setScale(JsonHelper2.getVec3d(j, "scale"));
+		
+		return a;
 	}
 }

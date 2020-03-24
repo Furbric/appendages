@@ -2,67 +2,86 @@ package agency.highlysuspect.appendages.parts;
 
 import agency.highlysuspect.appendages.parts.color.ColorPalette;
 import agency.highlysuspect.appendages.util.JsonFile;
-import com.google.gson.JsonArray;
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.JsonHelper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class Outfit {
-	public Outfit(String name) {
-		this.name = name;
-	}
 	
 	private String name;
-	private final List<Appendage> appendages = new ArrayList<>();
-	private final ColorPalette colorPalette = new ColorPalette(8);
+	private List<Appendage> appendages = new ArrayList<>();
+	private ColorPalette palette = new ColorPalette(8);
 	
-	public void forEachAppendage(Consumer<Appendage> func) {
-		appendages.forEach(func);
+	public String getName() {
+		return name;
+	}
+	
+	public Outfit setName(String name) {
+		this.name = name;
+		return this;
 	}
 	
 	public List<Appendage> getAppendages() {
 		return appendages;
 	}
 	
-	public void addAppendage(Appendage app) {
-		appendages.add(app);
+	public Outfit setAppendages(List<Appendage> appendages) {
+		this.appendages = appendages;
+		return this;
+	}
+	
+	public Outfit addAppendage(Appendage appendage) {
+		appendages.add(appendage);
+		return this;
 	}
 	
 	public ColorPalette getPalette() {
-		return colorPalette;
+		return palette;
 	}
 	
-	public String getName() {
-		return name;
+	public Outfit setPalette(ColorPalette palette) {
+		this.palette = palette;
+		return this;
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public JsonObject toJson() {
+	public JsonElement toJson() {
 		JsonObject j = new JsonObject();
+		
 		j.addProperty("name", name);
-		
-		j.add("palette", colorPalette.toJson());
-		
-		JsonArray appArray = new JsonArray();
-		forEachAppendage(app -> appArray.add(app.toJson()));
-		j.add("appendages", appArray);
+		j.add("palette", palette.toJson());
+		j.add("appendages", JsonHelper2.listToJsonArray(appendages, Appendage::toJson));
 		
 		return j;
 	}
 	
+	public static Outfit fromJson(JsonElement je) throws JsonSyntaxException {
+		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
+		
+		return new Outfit()
+			.setName(JsonHelper.getString(j, "name"))
+			.setPalette(ColorPalette.fromJson(j.get("palette")))
+			.setAppendages(JsonHelper2.getList(j, "appendages", Appendage::fromJson));
+	}
+	
 	public JsonFile toJsonFile(JsonFile.Directory directory) throws IOException {
-		JsonFile file = directory.newFile(name);
-		
-		JsonObject j = toJson();
-		
-		file.setJson(j);
+		JsonFile file = directory.newFileWithPreferredFilename(name);
+		file.setJson(toJson());
 		return file;
+	}
+	
+	//NB: Doesn't call "read" on the json file.
+	//That's why it doesn't throw IOException.
+	public static Outfit fromJsonFile(JsonFile file) throws JsonSyntaxException {
+		try {
+			return fromJson(file.getJson());
+		} catch(Exception e) {
+			throw new JsonSyntaxException("Cannot read outfit in file " + file.getPath(), e);
+		}
 	}
 }

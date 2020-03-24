@@ -1,15 +1,20 @@
 package agency.highlysuspect.appendages.parts;
 
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.model.ModelPart;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.util.math.Vector3f;
+import net.minecraft.util.JsonHelper;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public enum BodyPart {
@@ -136,9 +141,23 @@ public enum BodyPart {
 		
 		public JsonElement toJson() {
 			JsonObject j = new JsonObject();
-			j.addProperty("body_part", bodyPart.name());
+			
+			j.addProperty("body_part", JsonHelper2.enumToName(bodyPart));
 			j.addProperty("mount_point", getName());
+			
 			return j;
+		}
+		
+		public static MountPoint fromJson(JsonElement je) throws JsonParseException {
+			JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
+			
+			BodyPart bodyPart = JsonHelper2.nameToEnum(JsonHelper.getString(j, "body_part"), BodyPart.class);
+			String name = JsonHelper.getString(j, "mount_point");
+			
+			MountPoint point = bodyPart.getMountPointByName(name);
+			if (point == null) throw new JsonSyntaxException("No mount point named " + name + " on part " + bodyPart.name());
+			
+			return point;
 		}
 	}
 }

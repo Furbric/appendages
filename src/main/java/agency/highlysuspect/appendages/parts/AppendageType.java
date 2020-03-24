@@ -1,42 +1,54 @@
 package agency.highlysuspect.appendages.parts;
 
 import agency.highlysuspect.appendages.render.AppendageModel;
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 
 public class AppendageType {
-	public AppendageType(Identifier id, String artist) {
-		this.id = id;
-		this.artist = artist;
-	}
-	
-	private final Identifier id;
-	private final String artist;
+	private Identifier id;
 	
 	public Identifier getId() {
 		return id;
 	}
 	
+	public AppendageType setId(Identifier id) {
+		this.id = id;
+		return this;
+	}
+	
 	public String getArtist() {
-		return artist;
+		//TODO look this up
+		return "Nobody";
 	}
 	
 	public AppendageModel getModel() {
-		//TODO Stub
+		//TODO look this up
 		return null;
 	}
 	
 	public void draw(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-	
+		//TODO of course
 	}
 	
 	public JsonElement toJson() {
-		//TODO make a registry for these
-		return new JsonPrimitive(id.toString());
+		JsonObject j = new JsonObject();
+		
+		j.addProperty("id", id.toString());
+		
+		return j;
 	}
 	
-	//Model? (probably by id)
+	public static AppendageType fromJson(JsonElement je) throws JsonParseException {
+		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
+		
+		return new AppendageType()
+			.setId(new Identifier(JsonHelper.getString(j, "id")));
+	}
 }

@@ -1,134 +1,82 @@
 package agency.highlysuspect.appendages.parts.color;
 
 import agency.highlysuspect.appendages.parts.Outfit;
+import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonSyntaxException;
+import net.minecraft.util.JsonHelper;
 
-public abstract class AppendageColor {
-	public abstract int getColor();
-	public abstract void setColor(int newColor);
+public class AppendageColor {
+	//Janky "tagged union", because doing it the actual way with subclasses made my heart weep (and my head hurt).
+	//Would do just about anything for a Rust-like enum right now, tbh.
+	//Fortunately, for both FIXED and PALETTE_REFERENCE specializations, I want to store an int, so I can use the same one.
+	//And for UNSET I don't need to store anything, but I won't let the extra int bother me.
 	
-	public static AppendageColor fromJson(JsonObject json, Outfit outfit) {
-		//Hacky, but it works
-		String type = json.get("type").getAsString();
+	public enum Type {
+		UNSET,
+		FIXED,
+		PALETTE_REFERENCE,
+		;
+	}
+	
+	private Type type = Type.UNSET;
+	private int value;
+	
+	public int getColor(Outfit outfit) {
+		if(type == Type.UNSET) return 0x000000;
+		if(type == Type.FIXED) return value;
+		if(type == Type.PALETTE_REFERENCE) return outfit.getPalette().get(value).value;
+		throw new IllegalStateException("unknown type " + type.toString());
+	}
+	
+	public AppendageColor setColor(int color) {
+		type = Type.FIXED;
+		value = color;
+		return this;
+	}
+	
+	public AppendageColor setReference(int ref) {
+		type = Type.PALETTE_REFERENCE;
+		value = ref;
+		return this;
+	}
+	
+	public AppendageColor unset() {
+		type = Type.UNSET;
+		return this;
+	}
+	
+	public JsonElement toJson() {
+		JsonObject j = new JsonObject();
+		
+		j.addProperty("type", JsonHelper2.enumToName(type));
+		if(type == Type.FIXED) {
+			j.addProperty("color", Integer.toString(value, 16));
+		} else if(type == Type.PALETTE_REFERENCE) {
+			j.addProperty("ref", value);
+		} else if(type == Type.UNSET) {
+			//Do nothing lol
+		} else {
+			throw new IllegalStateException("unknown type " + type.toString());
+		}
+		
+		return j;
+	}
+	
+	public static AppendageColor fromJson(JsonElement je) throws JsonParseException {
+		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
+		
+		AppendageColor color = new AppendageColor();
+		Type type = JsonHelper2.nameToEnum(JsonHelper.getString(j, "type"), Type.class);
+		
 		switch(type) {
-			case "standalone": {
-				Standalone poot = new Standalone();
-				poot.fromJsonInner(json.get("value"));
-				return poot;
-			}
-			case "palette_reference": {
-				PaletteReference poot = new PaletteReference();
-				poot.outfit = outfit;
-				poot.fromJsonInner(json.get("value"));
-				return poot;
-			}
-		}
-		return new Unset();
-	}
-	
-	public interface JsonSerializable {
-		default JsonObject toJson() {
-			JsonObject j = new JsonObject();
-			j.addProperty("type", key());
-			j.add("value", toJsonInner());
-			return j;
+			case UNSET: return color.unset();
+			case FIXED: return color.setColor(JsonHelper2.parseInt(JsonHelper.getString(j, "color"), 16, 0x000000));
+			case PALETTE_REFERENCE: return color.setReference(JsonHelper.getInt(j, "ref"));
 		}
 		
-		String key();
-		JsonElement toJsonInner();
-		void fromJsonInner(JsonElement e);
-	}
-	
-	public static class Unset extends AppendageColor {
-		@Override
-		public int getColor() {
-			return 0;
-		}
-		
-		@Override
-		public void setColor(int newColor) {
-			//no-op
-		}
-	}
-	
-	public static class Standalone extends AppendageColor implements JsonSerializable {
-		private Standalone() {
-			this(0);
-		}
-		
-		public Standalone(int color) {
-			this.color = color;
-		}
-		
-		private int color;
-		
-		@Override
-		public int getColor() {
-			return color;
-		}
-		
-		@Override
-		public void setColor(int newColor) {
-			color = newColor;
-		}
-		
-		@Override
-		public String key() {
-			return "standalone";
-		}
-		
-		@Override
-		public JsonElement toJsonInner() {
-			return new JsonPrimitive(color);
-		}
-		
-		@Override
-		public void fromJsonInner(JsonElement e) {
-			setColor(e.getAsInt());
-		}
-	}
-	
-	public static class PaletteReference extends AppendageColor implements JsonSerializable {
-		private PaletteReference() {}
-		
-		public PaletteReference(Outfit outfit, int paletteId) {
-			this.outfit = outfit;
-			this.paletteId = paletteId;
-		}
-		
-		private Outfit outfit;
-		private int paletteId;
-		
-		@Override
-		public int getColor() {
-			AppendageColor pointerChase = outfit.getPalette().get(paletteId);
-			if(pointerChase instanceof PaletteReference) return 0;
-			else return pointerChase.getColor();
-		}
-		
-		@SuppressWarnings("UnnecessaryReturnStatement")
-		@Override
-		public void setColor(int newColor) {
-			AppendageColor pointerChase = outfit.getPalette().get(paletteId);
-			if(pointerChase instanceof PaletteReference) return;
-			else pointerChase.setColor(newColor);
-		}
-		
-		@Override
-		public String key() {
-			return "palette_reference";
-		}
-		
-		@Override
-		public JsonElement toJsonInner() {
-			return new JsonPrimitive(paletteId);
-		}
-		
-		@Override
-		public void fromJsonInner(JsonElement e) {
-			paletteId = e.getAsInt();
-		}
+		throw new IllegalStateException("unknown type " + type.toString());
 	}
 }
