@@ -1,10 +1,10 @@
 package agency.highlysuspect.appendages.parts.color;
 
+import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
 import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 
 public class ColorPalette {
 	public ColorPalette(int size) {
@@ -27,7 +27,7 @@ public class ColorPalette {
 		colors[id] = color;
 	}
 	
-	public JsonElement toJson() {
+	public JsonElement toJson(AppendageTypesRegistry registry) {
 		JsonArray array = new JsonArray();
 		
 		for (AppendageColor color : colors) {
@@ -37,14 +37,14 @@ public class ColorPalette {
 		return array;
 	}
 	
-	public static ColorPalette fromJson(JsonElement je) throws JsonParseException {
+	public static ColorPalette fromJson(JsonElement je, AppendageTypesRegistry registry) throws JsonParseException {
 		JsonArray array = JsonHelper2.ensureType(je, JsonArray.class);
 		
 		int size = array.size();
 		ColorPalette palette = new ColorPalette(size);
 		
 		for (int i = 0; i < array.size(); i++) {
-			palette.setColor(i, AppendageColor.fromJson(array.get(i)));
+			palette.setColor(i, AppendageColor.fromJson(array.get(i), registry));
 		}
 		
 		return palette;

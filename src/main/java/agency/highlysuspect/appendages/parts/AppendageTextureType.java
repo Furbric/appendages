@@ -1,43 +1,32 @@
 package agency.highlysuspect.appendages.parts;
 
+import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
 import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
 
 public class AppendageTextureType {
-	private Identifier id;
-	
-	public Identifier getId() {
-		return id;
+	public AppendageTextureType(int tintSlots) {
+		this.tintSlots = tintSlots;
 	}
 	
-	public AppendageTextureType setId(Identifier id) {
-		this.id = id;
-		return this;
+	private final int tintSlots;
+	
+	public Identifier getId(AppendageTypesRegistry registry) {
+		return registry.getTextureTypes().getId(this);
 	}
 	
 	public int getTintSlots() {
-		//TODO: look this up in some kind of registry; no need to store it here probably
-		return 0;
+		return tintSlots;
 	}
 	
-	public JsonElement toJson() {
-		JsonObject j = new JsonObject();
-		
-		j.addProperty("id", id.toString());
-		
-		return j;
+	public JsonElement toJson(AppendageTypesRegistry registry) {
+		return new JsonPrimitive(getId(registry).toString());
 	}
 	
-	public static AppendageTextureType fromJson(JsonElement je) throws JsonParseException {
-		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
-		
-		Identifier id = new Identifier(JsonHelper.getString(j, "id"));
-		
-		return new AppendageTextureType().setId(id);
+	public static AppendageTextureType fromJson(JsonElement je, AppendageTypesRegistry registry) throws JsonParseException {
+		return registry.getTextureType(new Identifier(JsonHelper2.ensureType(je, JsonPrimitive.class).getAsString()));
 	}
 }

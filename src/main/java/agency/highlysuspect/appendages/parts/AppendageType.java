@@ -1,54 +1,47 @@
 package agency.highlysuspect.appendages.parts;
 
-import agency.highlysuspect.appendages.render.AppendageModel;
+import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
 import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
+import com.google.gson.JsonPrimitive;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonHelper;
+
+import java.util.function.Consumer;
 
 public class AppendageType {
-	private Identifier id;
-	
-	public Identifier getId() {
-		return id;
+	public AppendageType(String artist, Consumer<Appendage> modelConfigurator) {
+		this.artist = artist;
+		this.modelConfigurator = modelConfigurator;
 	}
 	
-	public AppendageType setId(Identifier id) {
-		this.id = id;
-		return this;
+	private final String artist;
+	
+	private final Consumer<Appendage> modelConfigurator;
+	
+	public Identifier getId(AppendageTypesRegistry registry) {
+		return registry.getAppendageTypes().getId(this);
 	}
 	
 	public String getArtist() {
-		//TODO look this up
-		return "Nobody";
+		return artist;
 	}
 	
-	public AppendageModel getModel() {
-		//TODO look this up
-		return null;
+	public void applyDefaultOptions(Appendage model) {
+		modelConfigurator.accept(model);
 	}
 	
-	public void draw(MatrixStack matrices, VertexConsumerProvider vertexConsumers) {
-		//TODO of course
+	public Appendage newAppendage() {
+		Appendage wow = new Appendage(this);
+		applyDefaultOptions(wow);
+		return wow;
 	}
 	
-	public JsonElement toJson() {
-		JsonObject j = new JsonObject();
-		
-		j.addProperty("id", id.toString());
-		
-		return j;
+	public JsonElement toJson(AppendageTypesRegistry registry) {
+		return new JsonPrimitive(getId(registry).toString());
 	}
 	
-	public static AppendageType fromJson(JsonElement je) throws JsonParseException {
-		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
-		
-		return new AppendageType()
-			.setId(new Identifier(JsonHelper.getString(j, "id")));
+	public static AppendageType fromJson(JsonElement je, AppendageTypesRegistry registry) throws JsonParseException {
+		return registry.getAppendageType(new Identifier(JsonHelper2.ensureType(je, JsonPrimitive.class).getAsString()));
 	}
 }

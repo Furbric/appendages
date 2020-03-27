@@ -1,5 +1,6 @@
 package agency.highlysuspect.appendages.parts;
 
+import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
 import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -14,7 +15,6 @@ import net.minecraft.util.JsonHelper;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public enum BodyPart {
@@ -139,7 +139,7 @@ public enum BodyPart {
 			} else return mirroredPart.getMountPointByName(name);
 		}
 		
-		public JsonElement toJson() {
+		public JsonElement toJson(AppendageTypesRegistry registry) {
 			JsonObject j = new JsonObject();
 			
 			j.addProperty("body_part", JsonHelper2.enumToName(bodyPart));
@@ -148,7 +148,7 @@ public enum BodyPart {
 			return j;
 		}
 		
-		public static MountPoint fromJson(JsonElement je) throws JsonParseException {
+		public static MountPoint fromJson(JsonElement je, AppendageTypesRegistry registry) throws JsonParseException {
 			JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
 			
 			BodyPart bodyPart = JsonHelper2.nameToEnum(JsonHelper.getString(j, "body_part"), BodyPart.class);

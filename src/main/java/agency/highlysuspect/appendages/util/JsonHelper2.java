@@ -36,9 +36,13 @@ public class JsonHelper2 {
 	}
 	
 	public static <T> List<T> getList(JsonObject j, String key, Function<JsonElement, ? extends T> elementGetter) {
-		JsonArray array = JsonHelper.getArray(j, "key");
-		
 		List<T> list = new ArrayList<>();
+		
+		JsonElement maybeArray = j.get(key);
+		if(maybeArray == null) return list;
+		
+		JsonArray array = maybeArray.getAsJsonArray();
+		
 		for (JsonElement elem : array) {
 			list.add(elementGetter.apply(elem));
 		}

@@ -1,11 +1,11 @@
 package agency.highlysuspect.appendages.parts.color;
 
 import agency.highlysuspect.appendages.parts.Outfit;
+import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
 import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonSyntaxException;
 import net.minecraft.util.JsonHelper;
 
 public class AppendageColor {
@@ -65,7 +65,7 @@ public class AppendageColor {
 		return j;
 	}
 	
-	public static AppendageColor fromJson(JsonElement je) throws JsonParseException {
+	public static AppendageColor fromJson(JsonElement je, AppendageTypesRegistry registry) throws JsonParseException {
 		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
 		
 		AppendageColor color = new AppendageColor();
