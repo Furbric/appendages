@@ -35,7 +35,7 @@ public class BestiaryReloadListener implements SimpleResourceReloadListener<Best
 				app.setModel(new AppendageModel(breadModelType).vibeCheck());
 				app.setMountPoint(BodyPart.TORSO.getMountPointByName("back"));
 			});
-			bestiary.registerAppendagePreset(new Identifier(Init.MODID, "bread"), breadPreset);
+			bestiary.registerPreset(new Identifier(Init.MODID, "bread"), breadPreset);
 			
 			profiler.pop();
 			return bestiary;
