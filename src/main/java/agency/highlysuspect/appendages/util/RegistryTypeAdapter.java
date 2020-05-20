@@ -10,19 +10,18 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public class RegistryTypeAdapter<T> extends TypeAdapter<T> {
-	public RegistryTypeAdapter(Supplier<Registry<T>> registryLookup) {
+	private RegistryTypeAdapter(Supplier<Registry<T>> registryLookup) {
 		this.registryLookup = registryLookup;
+	}
+	
+	public static <T> TypeAdapter<T> createNullSafe(Supplier<Registry<T>> registryLookup) {
+		return new RegistryTypeAdapter<>(registryLookup).nullSafe();
 	}
 	
 	private final Supplier<Registry<T>> registryLookup;
 	
 	@Override
 	public void write(JsonWriter out, T value) throws IOException {
-		if(value == null) {
-			out.nullValue();
-			return;
-		}
-		
 		Identifier id = registryLookup.get().getId(value);
 		if(id == null) {
 			out.nullValue();
@@ -34,7 +33,7 @@ public class RegistryTypeAdapter<T> extends TypeAdapter<T> {
 	
 	@Override
 	public T read(JsonReader in) throws IOException {
-		//No need to null-check, both Registry#get and Identifier.tryParse pass nulls along 
+		//No need to null-check, both Registry#get and Identifier.tryParse pass nulls along
 		return registryLookup.get().get(Identifier.tryParse(in.nextString()));
 	}
 }

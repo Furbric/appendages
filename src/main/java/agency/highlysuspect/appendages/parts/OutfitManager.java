@@ -51,11 +51,13 @@ public class OutfitManager {
 			.vibeCheck()
 		);
 		
+		//Test that it survives a serialization and deserialization cycle
+		String toJson = Init.GSON.toJson(test);
 		if(asdfghjkl) {
-			Init.LOGGER.info(Init.GSON.toJson(test));
+			Init.LOGGER.info(toJson);
 			asdfghjkl = false;
 		}
 		
-		return test;
+		return Init.GSON.fromJson(toJson, Outfit.class);
 	}
 }
