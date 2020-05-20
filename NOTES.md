@@ -1,3 +1,5 @@
+**Some of this is outdated please see MORE_NOTES.md**
+
 # Structure
 
 * Different approach to appendages.
@@ -79,7 +81,7 @@ Think about this more.
 
 ## Models
 
-There's the crazy model format that Tails uses, that appears to have animation support etc.
+There's the crazy model format that Tails uses (GLTF), that appears to have animation support etc.
 
 Would also be nice to support block and item models. Probably not too difficult to, useful for testing as well.
 

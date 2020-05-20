@@ -82,4 +82,5 @@ public class JsonHelper2 {
 			throw new JsonSyntaxException("expected a " + target.getSimpleName() + ", found a " + thing.getClass().getSimpleName());
 		}
 	}
+	
 }

@@ -1,30 +1,54 @@
 package agency.highlysuspect.appendages;
 
-import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
-import agency.highlysuspect.appendages.resource.AppendagesResourceReloadListener;
+import agency.highlysuspect.appendages.parts.*;
+import agency.highlysuspect.appendages.parts.color.AppendageColor;
+import agency.highlysuspect.appendages.resource.Bestiary;
+import agency.highlysuspect.appendages.resource.BestiaryReloadListener;
+import agency.highlysuspect.appendages.util.AppendageColorSerde;
+import agency.highlysuspect.appendages.util.MountPointSerde;
+import agency.highlysuspect.appendages.util.RegistryTypeAdapter;
+import agency.highlysuspect.appendages.util.Vec3dTypeAdapter;
+import com.google.gson.FieldNamingPolicy;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.resource.ResourceType;
+import net.minecraft.util.math.Vec3d;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import java.nio.file.Path;
 
 public class Init implements ClientModInitializer {
 	public static final String MODID = "appendages";
 	public static final Logger LOGGER = LogManager.getLogger(MODID);
 	
-	public static AppendageTypesRegistry appendageTypesRegistry = null;
+	public static Bestiary bestiary = null;
+	public static Wardrobe wardrobe = null;
+	
+	public static final Gson GSON;
+	
+	static {
+		GSON = new GsonBuilder()
+			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
+			.setPrettyPrinting()
+			.serializeNulls()
+			.registerTypeAdapter(Vec3d.class, new Vec3dTypeAdapter())
+			.registerTypeAdapter(BodyPart.MountPoint.class, new MountPointSerde())
+			.registerTypeAdapter(AppendageColor.class, new AppendageColorSerde())
+			.registerTypeAdapter(AppendagePreset.class, new RegistryTypeAdapter<>(() -> bestiary.getAppendagePresets()))
+			.registerTypeAdapter(AppendageModelType.class, new RegistryTypeAdapter<>(() -> bestiary.getModelTypes()))
+			.registerTypeAdapter(AppendageTextureType.class, new RegistryTypeAdapter<>(() -> bestiary.getTextureTypes()))
+			.create();
+	}
 	
 	@Override
 	public void onInitializeClient() {
-		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new AppendagesResourceReloadListener());
-	}
-	
-	private static long lastLogTime = 0;
-	public static void logSometimes(String asd) {
-		long now = System.currentTimeMillis();
-		if(now - lastLogTime > 500L) {
-			lastLogTime = now;
-			LOGGER.info(asd);
-		}
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new BestiaryReloadListener());
+		
+		Path appendagesPath = MinecraftClient.getInstance().runDirectory.toPath().resolve("appendages");
+		wardrobe = new Wardrobe(appendagesPath);
 	}
 }

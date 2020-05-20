@@ -1,31 +1,37 @@
 package agency.highlysuspect.appendages.parts;
 
-import java.util.Collection;
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Wardrobe {
+	public Wardrobe(Path path) {
+		wardrobePath = path.resolve("wardrobe");
+	}
+	
 	private final Map<String, Outfit> outfits = new HashMap<>();
+	private final Path wardrobePath;
 	
-	public Collection<Outfit> getOutfits() {
-		return outfits.values();
+	public void init() throws IOException {
+		Files.createDirectories(wardrobePath);
 	}
 	
-	public void addOutfit(Outfit outfit) {
-		outfits.put(outfit.getName(), outfit);
+	public void clear() {
+		outfits.clear();
 	}
 	
-	public void removeOutfit(Outfit outfit) {
-		removeOutfitByName(outfit.getName());
+	public void read() throws IOException {
+		Files.walk(wardrobePath, FileVisitOption.FOLLOW_LINKS)
+			.filter(path -> Files.isRegularFile(path))
+			.forEach(path -> {
+				try {
+					
+				} catch(Exception e) {
+					
+				}
+			});
 	}
-	
-	public Outfit getOutfitByName(String name) {
-		return outfits.get(name);
-	}
-	
-	public void removeOutfitByName(String name) {
-		outfits.remove(name);
-	}
-	
-	
 }

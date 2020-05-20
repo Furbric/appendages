@@ -1,25 +1,26 @@
 package agency.highlysuspect.appendages.resource;
 
 import agency.highlysuspect.appendages.parts.AppendageModelType;
+import agency.highlysuspect.appendages.parts.AppendagePreset;
 import agency.highlysuspect.appendages.parts.AppendageTextureType;
-import agency.highlysuspect.appendages.parts.AppendageType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 
-import java.util.Optional;
-
-public class AppendageTypesRegistry {
-	private final SimpleRegistry<AppendageType> appendageTypes = new SimpleRegistry<>();
+/**
+ * A collection of pieces-parts used to build outfits.
+ */
+public class Bestiary {
+	private final SimpleRegistry<AppendagePreset> appendagePresets = new SimpleRegistry<>();
 	private final SimpleRegistry<AppendageModelType> modelTypes = new SimpleRegistry<>();
 	private final SimpleRegistry<AppendageTextureType> textureTypes = new SimpleRegistry<>();
 	
-	public Registry<AppendageType> getAppendageTypes() {
-		return appendageTypes;
+	public Registry<AppendagePreset> getAppendagePresets() {
+		return appendagePresets;
 	}
 	
-	public AppendageType getAppendageType(Identifier id) {
-		return appendageTypes.get(id);
+	public AppendagePreset getAppendageType(Identifier id) {
+		return appendagePresets.get(id);
 	}
 	
 	public Registry<AppendageModelType> getModelTypes() {
@@ -38,8 +39,8 @@ public class AppendageTypesRegistry {
 		return textureTypes.get(id);
 	}
 	
-	void registerAppendageType(Identifier id, AppendageType type) {
-		appendageTypes.add(id, type);
+	void registerAppendagePreset(Identifier id, AppendagePreset type) {
+		appendagePresets.add(id, type);
 	}
 	
 	void registerModelType(Identifier id, AppendageModelType type) {

@@ -1,10 +1,6 @@
 package agency.highlysuspect.appendages.parts;
 
-import agency.highlysuspect.appendages.resource.AppendageTypesRegistry;
-import agency.highlysuspect.appendages.util.JsonHelper2;
 import com.google.common.base.Preconditions;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
@@ -13,7 +9,6 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.util.JsonHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -53,26 +48,6 @@ public class AppendageModel {
 			Preconditions.checkNotNull(textures.get(i), "null texture at " + i);
 		}
 		return this;
-	}
-	
-	public JsonElement toJson(AppendageTypesRegistry registry) {
-		JsonObject j = new JsonObject();
-		
-		j.add("type", type.toJson(registry));
-		
-		if(!textures.isEmpty()) {
-			j.add("textures", JsonHelper2.listToJsonArray(textures, tex -> tex.toJson(registry)));
-		}
-		
-		return j;
-	}
-	
-	public static AppendageModel fromJson(JsonElement je, AppendageTypesRegistry registry) {
-		JsonObject j = JsonHelper2.ensureType(je, JsonObject.class);
-		
-		return new AppendageModel()
-			.setType(AppendageModelType.fromJson(JsonHelper.getObject(j, "type"), registry))
-			.setTextures(JsonHelper2.getList(j, "textures", jj -> AppendageTexture.fromJson(jj, registry)));
 	}
 	
 	///// functionality
