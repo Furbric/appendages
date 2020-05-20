@@ -11,16 +11,16 @@ import net.minecraft.util.registry.SimpleRegistry;
  * A collection of pieces-parts used to build outfits.
  */
 public class Bestiary {
-	private final SimpleRegistry<AppendagePreset> appendagePresets = new SimpleRegistry<>();
+	private final SimpleRegistry<AppendagePreset> presets = new SimpleRegistry<>();
 	private final SimpleRegistry<AppendageModelType> modelTypes = new SimpleRegistry<>();
 	private final SimpleRegistry<AppendageTextureType> textureTypes = new SimpleRegistry<>();
 	
-	public Registry<AppendagePreset> getAppendagePresets() {
-		return appendagePresets;
+	public Registry<AppendagePreset> getPresets() {
+		return presets;
 	}
 	
-	public AppendagePreset getAppendageType(Identifier id) {
-		return appendagePresets.get(id);
+	public AppendagePreset getPreset(Identifier id) {
+		return presets.get(id);
 	}
 	
 	public Registry<AppendageModelType> getModelTypes() {
@@ -39,8 +39,8 @@ public class Bestiary {
 		return textureTypes.get(id);
 	}
 	
-	void registerAppendagePreset(Identifier id, AppendagePreset type) {
-		appendagePresets.add(id, type);
+	void registerPreset(Identifier id, AppendagePreset type) {
+		presets.add(id, type);
 	}
 	
 	void registerModelType(Identifier id, AppendageModelType type) {

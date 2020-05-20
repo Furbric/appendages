@@ -12,7 +12,7 @@ public class OutfitManager {
 		if(false) return null;
 		
 		Outfit test = new Outfit().setName("yeet");
-		AppendagePreset bread = Init.bestiary.getAppendageType(new Identifier(Init.MODID, "bread"));
+		AppendagePreset bread = Init.bestiary.getPreset(new Identifier(Init.MODID, "bread"));
 		
 		Appendage breadWing = bread.get()
 			.setPositionOffset(new Vec3d(2.5, 7, -1))

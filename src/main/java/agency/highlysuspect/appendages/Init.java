@@ -38,7 +38,7 @@ public class Init implements ClientModInitializer {
 			.registerTypeAdapter(Vec3d.class, new Vec3dTypeAdapter())
 			.registerTypeAdapter(BodyPart.MountPoint.class, new MountPointSerde())
 			.registerTypeAdapter(AppendageColor.class, new AppendageColorSerde())
-			.registerTypeAdapter(AppendagePreset.class, RegistryTypeAdapter.createNullSafe(() -> bestiary.getAppendagePresets()))
+			.registerTypeAdapter(AppendagePreset.class, RegistryTypeAdapter.createNullSafe(() -> bestiary.getPresets()))
 			.registerTypeAdapter(AppendageModelType.class, RegistryTypeAdapter.createNullSafe(() -> bestiary.getModelTypes()))
 			.registerTypeAdapter(AppendageTextureType.class, RegistryTypeAdapter.createNullSafe(() -> bestiary.getTextureTypes()))
 			.create();
