@@ -52,3 +52,4 @@ The metatexture problem: I was also thinking textures could sometimes be more co
 
 However I do think the current modelling of this system is too complex. If the number of color channels per texture is limited to three so the r/g/b channel trick from Tails works, and if one texture always maps to one .png file on-disk, the simplified version will work just fine.
 
+There are some "type safety" concerns, though, like defining too many (or not enough) textures for a given model. Idk. It's a tricky problem.
