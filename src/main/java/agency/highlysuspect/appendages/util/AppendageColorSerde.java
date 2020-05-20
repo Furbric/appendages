@@ -12,17 +12,13 @@ public class AppendageColorSerde implements JsonSerializer<AppendageColor>, Json
 		JsonObject j = new JsonObject();
 		
 		if(src instanceof AppendageColor.Unset) {
-			//Leave the object blank
+			return new JsonObject();
 		} else if(src instanceof AppendageColor.Fixed) {
 			AppendageColor.Fixed fixed = (AppendageColor.Fixed) src;
-			
-			j.addProperty("type", "fixed");
-			j.addProperty("color", Integer.toString(fixed.getColor(), 16));
+			return JsonHelper2.colorToRgbArray(fixed.getColor());
 		} else if(src instanceof AppendageColor.PaletteReference) {
 			AppendageColor.PaletteReference ref = (AppendageColor.PaletteReference) src;
-			
-			j.addProperty("type", "palette_reference");
-			j.addProperty("ref", ref.getReference());
+			return new JsonPrimitive("#" + ref.getReference());
 		}
 		
 		return j;
@@ -30,16 +26,17 @@ public class AppendageColorSerde implements JsonSerializer<AppendageColor>, Json
 	
 	@Override
 	public AppendageColor deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		JsonObject j = JsonHelper2.ensureType(json, JsonObject.class);
-		
-		if(!j.has("type")) return new AppendageColor.Unset();
-		
-		String type = JsonHelper.getString(j, "type");
-		switch(type) {
-			case "unset": return new AppendageColor.Unset();
-			case "fixed": return new AppendageColor.Fixed().setColor(JsonHelper2.parseInt(JsonHelper.getString(j, "color"), 16, 0x000000));
-			case "palette_reference": return new AppendageColor.PaletteReference().setReference(JsonHelper.getInt(j, "ref"));
-			default: throw new JsonParseException("unknown type " + type);
+		if(json.isJsonObject()) {
+			return new AppendageColor.Unset(); //represented by {}
+		} else if(json.isJsonArray() && json.getAsJsonArray().size() == 3) {
+			return new AppendageColor.Fixed().setColor(JsonHelper2.rgbArrayToColor(json.getAsJsonArray()));
+		} else if(json.isJsonPrimitive()) {
+			String s = json.getAsString();
+			if(s.startsWith("#")) {
+				return new AppendageColor.PaletteReference().setReference(Integer.parseInt(s.substring(1)));
+			}
 		}
+		
+		throw new JsonParseException("Not sure how to parse " + json.toString() + " as a color");
 	}
 }

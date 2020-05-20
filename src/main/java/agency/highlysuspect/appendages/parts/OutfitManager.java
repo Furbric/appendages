@@ -1,6 +1,7 @@
 package agency.highlysuspect.appendages.parts;
 
 import agency.highlysuspect.appendages.Init;
+import agency.highlysuspect.appendages.parts.color.AppendageColor;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
@@ -48,11 +49,19 @@ public class OutfitManager {
 			.setPositionOffset(new Vec3d(0, 10, -2))
 			.setRotationOffset(new Vec3d(0, 90, -20))
 			.setScale(new Vec3d(0.3, 1.5, 1))
+			.onModel(model -> {
+				model.getTextures().forEach(texture -> {
+					
+				});
+			})
 			.vibeCheck()
 		);
 		
-		//Test that it survives a serialization and deserialization cycle
-		String toJson = Init.GSON.toJson(test);
+		test.getPalette().set(0, new AppendageColor.Fixed().setColor(0x223344));
+		test.getPalette().set(1, new AppendageColor.PaletteReference().setReference(0));
+		
+		//Test that it survives a few serialization and deserialization cycles lmao
+		String toJson = Init.GSON.toJson(Init.GSON.fromJson(Init.GSON.toJson(test), Outfit.class));
 		if(asdfghjkl) {
 			Init.LOGGER.info(toJson);
 			asdfghjkl = false;

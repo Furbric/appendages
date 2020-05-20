@@ -18,7 +18,7 @@ public class AppendageModel {
 	
 	public AppendageModel(AppendageModelType type) {
 		this.type = type;
-		this.textures = new ArrayList<>(type.getTextureCount()); //TODO fixed-size lists? are those a thing
+		this.textures = new ArrayList<>(type.getTextureCount()); //TODO ideally, an int -> texture map, not a list
 	}
 	
 	private AppendageModelType type;
@@ -44,6 +44,7 @@ public class AppendageModel {
 	
 	public AppendageModel vibeCheck() {
 		Preconditions.checkNotNull(type, "null type!");
+		Preconditions.checkArgument(type.getTextureCount() == textures.size(), "differing texture count, expected " + type.getTextureCount() + " found " + textures.size());
 		for(int i = 0; i < type.getTextureCount(); i++) {
 			Preconditions.checkNotNull(textures.get(i), "null texture at " + i);
 		}

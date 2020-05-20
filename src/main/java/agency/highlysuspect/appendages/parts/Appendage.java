@@ -3,6 +3,8 @@ package agency.highlysuspect.appendages.parts;
 import com.google.common.base.Preconditions;
 import net.minecraft.util.math.Vec3d;
 
+import java.util.function.Consumer;
+
 public class Appendage {
 	public Appendage() {}
 	
@@ -29,6 +31,11 @@ public class Appendage {
 	
 	public Appendage setModel(AppendageModel model) {
 		this.model = model;
+		return this;
+	}
+	
+	public Appendage onModel(Consumer<AppendageModel> action) {
+		action.accept(model);
 		return this;
 	}
 	

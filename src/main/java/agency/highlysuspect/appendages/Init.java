@@ -34,6 +34,7 @@ public class Init implements ClientModInitializer {
 		GSON = new GsonBuilder()
 			.setFieldNamingPolicy(FieldNamingPolicy.LOWER_CASE_WITH_UNDERSCORES)
 			.setPrettyPrinting()
+			.setLenient()
 			.serializeNulls()
 			.registerTypeAdapter(Vec3d.class, new Vec3dTypeAdapter())
 			.registerTypeAdapter(BodyPart.MountPoint.class, new MountPointSerde())

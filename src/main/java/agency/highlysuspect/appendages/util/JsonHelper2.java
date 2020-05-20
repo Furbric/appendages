@@ -83,4 +83,18 @@ public class JsonHelper2 {
 		}
 	}
 	
+	public static JsonArray colorToRgbArray(int color) {
+		JsonArray array = new JsonArray();
+		array.add((color & 0xFF0000) >> 16);
+		array.add((color & 0x00FF00) >> 8);
+		array.add((color & 0x0000FF));
+		return array;
+	}
+	
+	public static int rgbArrayToColor(JsonArray parts) {
+		return 
+			((parts.get(0).getAsInt() & 0xFF) << 16) |
+			((parts.get(1).getAsInt() & 0xFF) << 8) |
+			((parts.get(2).getAsInt() & 0xFF));
+	}
 }
