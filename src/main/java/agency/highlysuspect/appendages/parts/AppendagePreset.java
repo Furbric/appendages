@@ -12,6 +12,7 @@ public class AppendagePreset implements Supplier<Appendage> {
 	
 	public Appendage get() {
 		Appendage wow = new Appendage();
+		wow.setPreset(this);
 		modelConfigurator.accept(wow);
 		return wow;
 	}
