@@ -2,7 +2,6 @@ package agency.highlysuspect.appendages.util;
 
 import agency.highlysuspect.appendages.parts.color.AppendageColor;
 import com.google.gson.*;
-import net.minecraft.util.JsonHelper;
 
 import java.lang.reflect.Type;
 

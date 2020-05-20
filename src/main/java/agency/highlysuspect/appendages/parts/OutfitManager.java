@@ -13,13 +13,12 @@ public class OutfitManager {
 		if(false) return null;
 		
 		Outfit test = new Outfit().setName("yeet");
-		AppendagePreset bread = Init.bestiary.getPreset(new Identifier(Init.MODID, "bread"));
+		Preset<Appendage> bread = Init.presetRegistry.getAppendagePreset(new Identifier(Init.MODID, "bread"));
 		
 		Appendage breadWing = bread.get()
 			.setPositionOffset(new Vec3d(2.5, 7, -1))
 			.setRotationOffset(new Vec3d(-10, -85, -10))
-			.setScale(new Vec3d(1, 1, 1.2))
-			.vibeCheck();
+			.setScale(new Vec3d(1, 1, 1.2));
 		
 		test.addAppendage(breadWing);
 		test.addAppendage(breadWing.mirrored());
@@ -28,8 +27,7 @@ public class OutfitManager {
 			.setMountPoint(BodyPart.LEFT_ARM.getMountPointByName("left"))
 			.setPositionOffset(new Vec3d(0, 2, 0))
 			.setRotationOffset(new Vec3d(0, 0, 45))
-			.setScale(new Vec3d(0.5, 0.5, 0.5))
-			.vibeCheck();
+			.setScale(new Vec3d(0.5, 0.5, 0.5));
 		
 		test.addAppendage(breadArms);
 		test.addAppendage(breadArms.mirrored());
@@ -38,8 +36,8 @@ public class OutfitManager {
 			.setMountPoint(BodyPart.HEAD.getMountPointByName("top"))
 			.setPositionOffset(new Vec3d(-2, 1, -3))
 			.setRotationOffset(new Vec3d(0, -30, 150))
-			.setScale(new Vec3d(0.33, 0.33, 0.33))
-			.vibeCheck();
+			.setScale(new Vec3d(0.33, 0.33, 0.33)
+			);
 		
 		test.addAppendage(breadEars);
 		test.addAppendage(breadEars.mirrored());
@@ -49,12 +47,6 @@ public class OutfitManager {
 			.setPositionOffset(new Vec3d(0, 10, -2))
 			.setRotationOffset(new Vec3d(0, 90, -20))
 			.setScale(new Vec3d(0.3, 1.5, 1))
-			.onModel(model -> {
-				model.getTextures().forEach(texture -> {
-					
-				});
-			})
-			.vibeCheck()
 		);
 		
 		test.getPalette().set(0, new AppendageColor.Fixed().setColor(0x223344));

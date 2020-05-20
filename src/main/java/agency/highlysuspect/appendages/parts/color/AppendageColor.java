@@ -1,18 +1,24 @@
 package agency.highlysuspect.appendages.parts.color;
 
 import agency.highlysuspect.appendages.parts.Outfit;
+import agency.highlysuspect.appendages.util.Copyable;
 
 /**
  * Tagged union for the different things you might have on a color palette.
  * Remember to visit AppendageColorSerde if you add one.
  */
-public abstract class AppendageColor {
+public abstract class AppendageColor implements Copyable<AppendageColor> {
 	public abstract int getColorInContext(Outfit outfit);
 	
 	public static class Unset extends AppendageColor {
 		@Override
 		public int getColorInContext(Outfit outfit) {
 			return 0;
+		}
+		
+		@Override
+		public AppendageColor copy() {
+			return this; //it's immutable
 		}
 	}
 	
@@ -31,6 +37,11 @@ public abstract class AppendageColor {
 		public Fixed setColor(int color) {
 			this.color = color;
 			return this;
+		}
+		
+		@Override
+		public AppendageColor copy() {
+			return new AppendageColor.Fixed().setColor(color);
 		}
 	}
 	
@@ -58,7 +69,12 @@ public abstract class AppendageColor {
 			this.reference = reference;
 			return this;
 		}
+		
+		@Override
+		public AppendageColor copy() {
+			return new AppendageColor.PaletteReference().setReference(reference);
+		}
 	}
 	
-	//TODO: add a color-cycle color, maybe other combinators
+	//TODO: add a color-cycle color, maybe other combinators?
 }

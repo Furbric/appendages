@@ -1,54 +1,67 @@
 package agency.highlysuspect.appendages.parts;
 
-import com.google.common.base.Preconditions;
+import agency.highlysuspect.appendages.util.Copyable;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.model.PlayerEntityModel;
 import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.util.ModelIdentifier;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class AppendageModel {
+public class AppendageModel implements Copyable<AppendageModel> {
 	public AppendageModel() {}
 	
-	public AppendageModel(AppendageModelType type) {
-		this.type = type;
-		this.textures = new ArrayList<>(type.getTextureCount()); //TODO ideally, an int -> texture map, not a list
+	public AppendageModel(Preset<AppendageModel> preset) {
+		this.preset = preset;
 	}
 	
-	private AppendageModelType type;
-	private List<AppendageTexture> textures;
+	private Preset<AppendageModel> preset;
 	
-	public AppendageModelType getType() {
-		return type;
+	//TODO a ModelIdentifier is not a unique way to define a model. Probably need to bring out subclasses
+	private ModelIdentifier modelPath;
+	private AppendageTexture[] textures = new AppendageTexture[0];
+	
+	public ModelIdentifier getModelPath() {
+		return modelPath;
 	}
 	
-	public AppendageModel setType(AppendageModelType type) {
-		this.type = type;
+	public AppendageModel setModelPath(ModelIdentifier modelPath) {
+		this.modelPath = modelPath;
 		return this;
 	}
 	
-	public List<AppendageTexture> getTextures() {
+	public int getTextureCount() {
+		return textures.length;
+	}
+	
+	public AppendageModel setTextureCount(int textureCount) {
+		//TODO maybe copy the old ones over, idk, probably doesn't matter
+		this.textures = new AppendageTexture[textureCount];
+		
+		return this;
+	}
+	
+	public AppendageTexture[] getTextures() {
 		return textures;
 	}
 	
-	public AppendageModel setTextures(List<AppendageTexture> textures) {
+	public AppendageModel setTextures(AppendageTexture[] textures) {
 		this.textures = textures;
 		return this;
 	}
 	
-	public AppendageModel vibeCheck() {
-		Preconditions.checkNotNull(type, "null type!");
-		Preconditions.checkArgument(type.getTextureCount() == textures.size(), "differing texture count, expected " + type.getTextureCount() + " found " + textures.size());
-		for(int i = 0; i < type.getTextureCount(); i++) {
-			Preconditions.checkNotNull(textures.get(i), "null texture at " + i);
-		}
-		return this;
+	@Override
+	public AppendageModel copy() {
+		AppendageModel copy = new AppendageModel();
+		
+		copy.preset = preset;
+		copy.modelPath = modelPath;
+		copy.textures = copyArray(textures, AppendageTexture.class);
+		
+		return copy;
 	}
 	
 	///// functionality

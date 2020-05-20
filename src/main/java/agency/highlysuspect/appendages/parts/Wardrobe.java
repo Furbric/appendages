@@ -28,9 +28,9 @@ public class Wardrobe {
 			.filter(path -> Files.isRegularFile(path))
 			.forEach(path -> {
 				try {
-					
+					//load the outfit
 				} catch(Exception e) {
-					
+					//log an error
 				}
 			});
 	}

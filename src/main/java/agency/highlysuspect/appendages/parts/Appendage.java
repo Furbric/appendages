@@ -1,29 +1,25 @@
 package agency.highlysuspect.appendages.parts;
 
-import com.google.common.base.Preconditions;
+import agency.highlysuspect.appendages.util.Copyable;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.function.Consumer;
 
-public class Appendage {
+public class Appendage implements Copyable<Appendage> {
 	public Appendage() {}
 	
-	private AppendagePreset preset;
+	public Appendage(Preset<Appendage> preset) {
+		this.preset = preset;
+	}
+	
+	private Preset<Appendage> preset;
+	
 	private AppendageModel model;
 	private BodyPart.MountPoint mountPoint;
 	
 	private Vec3d positionOffset = Vec3d.ZERO;
 	private Vec3d rotationOffset = Vec3d.ZERO;
 	private Vec3d scale = new Vec3d(1, 1, 1);
-	
-	public AppendagePreset getPreset() {
-		return preset;
-	}
-	
-	public Appendage setPreset(AppendagePreset preset) {
-		this.preset = preset;
-		return this;
-	}
 	
 	public AppendageModel getModel() {
 		return model;
@@ -76,17 +72,14 @@ public class Appendage {
 		return this;
 	}
 	
-	public Appendage vibeCheck() {
-		Preconditions.checkNotNull(model, "null model!");
-		Preconditions.checkNotNull(mountPoint, "null mount point!");
-		return this;
-	}
-	
+	@Override
 	public Appendage copy() {
 		Appendage copy = new Appendage();
 		
 		copy.preset = preset;
-		copy.model = model;
+		
+		copy.model = model.copy();
+		
 		copy.mountPoint = mountPoint;
 		
 		copy.positionOffset = positionOffset;
@@ -97,6 +90,7 @@ public class Appendage {
 	}
 	
 	public Appendage mirrored() {
+		//TODO have some kind of relation between the original and the mirrored version
 		Appendage mirror = copy();
 		
 		mirror.positionOffset = mirror.positionOffset.multiply(-1, 1, 1);

@@ -14,42 +14,25 @@ The mount point system assumes you are a player-shaped biped. This isn't great.
 
 The divisions:
 
-* Model Types define:
-  * a method of loading a model file
-  * how many texture slots they have
-* Texture Types define:
-  * a texture path
-  * how many tint slots the texture has.
 * Models are a collection of:
-  * one model type
-  * a list of texture types, equal in size to the texture slots
-* Textures are a collection of:
-  * one texture type
-  * a color palette, equal in size to the tint slots of the texture
+  * a model reference (item model, GLTF model, something else?)
+  * a collection of textures for how to texture it
+* Model presets define the default options for a model.
+* Textures are:
+  * an Identifier for which texture to use
+  * a color palette for how to tint it
 
-Thinking about changing it to:
+Current problems:
 
-* Models are a collection of:
-  * a model (item model or GLTF model)
-  * a collection of textures
-  * a collection of color palettes, one for each texture
-* Model presets simply define the default options for a model.
-* Ditch special data structures for textures, define them by their identifier.
+* ModelIdentifiers, ironically, do not make good model identifiers
+  * A ModelIdentifier is not enough information to render an item model, for example
+* wrt. rendering item models on yourself, Mojang has a different idea of models
+  * Textures and models are not different things.
+  * This makes sense, you can't really retexture an item sensibly
+* I haven't even thought about how gltf models play in to the system
 
-Why the complexity?
+It probably doesn't make sense to keep thinking about "how can I make the system flexible enough to render gltf models and also item models", when I a) don't have gltf support in, b) don't know what it looks like, and c) don't think people will actually render item models on themself very much.
 
-* The idea behind divorcing textures from the model is that, as the player, you could apply literally any texture in the game to yourself. 
-* For example: stone wings, using the vanilla stone texture on the membrane part.
-* To make this look good, there has to be some kind of overlay texture (the wing's bones, in this case), so models have to support more than one texture slot at a time.
-* Each texture needs its own palette, so you can tint the bones without tinting the membrane between them.
-* Additionally there are different methods of interpreting a texture:
-  * most vanilla textures have one channel
-  * textures in Tails have three channels (kinda like a normal map, it uses r/g/b channels to mean "strength of tint 1/2/3")
-  * textures in appendages may have an unbounded amount of channels!
-  * either way, the UI should show the appropriate number of channels for each texture
-  
-The metatexture problem: I was also thinking textures could sometimes be more complicated than a single .png file. Like if you have some kind of five-channel texture, it would make sense to author those as five separate B&W png files, but it also makes sense to treat them as a single unit in-game and in-json.
+Putting item models as an appendage is kind of out-of-scope, right? It's supposed to be a mod for furries, most people don't have a breadsona. The only purposes I can think of are novelty haha there's a compass on my head now, and that's not a great reason to complicate the entire dang system.
 
-However I do think the current modelling of this system is too complex. If the number of color channels per texture is limited to three so the r/g/b channel trick from Tails works, and if one texture always maps to one .png file on-disk, the simplified version will work just fine.
-
-There are some "type safety" concerns, though, like defining too many (or not enough) textures for a given model. Idk. It's a tricky problem.
+TODO: take a look at Tails's GLTF loader.
