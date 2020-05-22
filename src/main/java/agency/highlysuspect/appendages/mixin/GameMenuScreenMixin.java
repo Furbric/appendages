@@ -1,6 +1,5 @@
 package agency.highlysuspect.appendages.mixin;
 
-import agency.highlysuspect.appendages.Init;
 import agency.highlysuspect.appendages.ui.AppendagesScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.GameMenuScreen;
@@ -29,7 +28,6 @@ public class GameMenuScreenMixin extends Screen {
 			20,
 			I18n.translate("appendages.ui.button.appendagesSettings"),
 			(button -> {
-				Init.LOGGER.info("owo");
 				MinecraftClient.getInstance().openScreen(new AppendagesScreen(this));
 			})
 		));

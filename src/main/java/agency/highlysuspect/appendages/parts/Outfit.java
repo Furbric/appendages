@@ -1,23 +1,15 @@
 package agency.highlysuspect.appendages.parts;
 
+import agency.highlysuspect.appendages.Init;
 import agency.highlysuspect.appendages.parts.color.ColorPalette;
+import agency.highlysuspect.appendages.render.OutfitRenderer;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Outfit {
-	private String name;
 	private List<Appendage> appendages = new ArrayList<>();
-	private ColorPalette palette = new ColorPalette(8);
-	
-	public String getName() {
-		return name;
-	}
-	
-	public Outfit setName(String name) {
-		this.name = name;
-		return this;
-	}
+	private ColorPalette colorPalette = new ColorPalette();
 	
 	public List<Appendage> getAppendages() {
 		return appendages;
@@ -29,16 +21,22 @@ public class Outfit {
 	}
 	
 	public Outfit addAppendage(Appendage appendage) {
-		appendages.add(appendage);
+		this.appendages.add(appendage);
 		return this;
 	}
 	
-	public ColorPalette getPalette() {
-		return palette;
+	public ColorPalette getColorPalette() {
+		return colorPalette;
 	}
 	
-	public Outfit setPalette(ColorPalette palette) {
-		this.palette = palette;
+	public Outfit setColorPalette(ColorPalette colorPalette) {
+		this.colorPalette = colorPalette;
 		return this;
+	}
+	
+	public OutfitRenderer bake() {
+		Init.LOGGER.info(Init.GSON.toJson(this));
+		
+		return new OutfitRenderer(appendages.stream().flatMap(a -> a.bake(this)));
 	}
 }

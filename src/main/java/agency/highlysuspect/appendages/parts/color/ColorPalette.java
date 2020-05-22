@@ -1,8 +1,6 @@
 package agency.highlysuspect.appendages.parts.color;
 
-import agency.highlysuspect.appendages.util.Copyable;
-
-public class ColorPalette implements Copyable<ColorPalette> {
+public class ColorPalette {
 	public ColorPalette() {
 		this(0);
 	}
@@ -26,10 +24,5 @@ public class ColorPalette implements Copyable<ColorPalette> {
 	
 	public void set(int id, AppendageColor color) {
 		colors[id] = color;
-	}
-	
-	@Override
-	public ColorPalette copy() {
-		return new ColorPalette(copyArray(colors, AppendageColor.class));
 	}
 }

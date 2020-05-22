@@ -97,8 +97,6 @@ public enum BodyPart {
 		}));
 	}
 	
-	//I hesitate to make this an enum, because not all body parts have the same set of mount points
-	//E.g. tail mount point
 	public static class MountPoint {
 		private MountPoint(BodyPart bodyPart, String name, BiConsumer<ModelPart.Cuboid, MatrixStack> setupFunc) {
 			this.bodyPart = bodyPart;
