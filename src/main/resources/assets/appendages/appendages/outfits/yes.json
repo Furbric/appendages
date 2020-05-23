@@ -7,10 +7,10 @@
     },
     {
       "preset": "appendages:bread_wing",
-      "position": [5.5, 7, -1],
-      "color_palette": [
-        "#0"
-      ]
+      "position": [5.5, 7, 4],
+      "rotation": [-10, -85, -30],
+      "color_palette": ["#0"],
+      "scale": [0.9, 0.9, 1]
     }
   ],
   "color_palette": [

@@ -7,8 +7,6 @@ import agency.highlysuspect.appendages.util.RegistryTypeAdapter;
 import com.google.common.base.Preconditions;
 import com.google.gson.annotations.JsonAdapter;
 import net.fabricmc.fabric.api.util.TriState;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.stream.Stream;
@@ -21,7 +19,7 @@ public class Appendage {
 	private String artist = null;
 	
 	private AppendageModel model = null;
-	private ColorPalette palette = null;
+	private ColorPalette colorPalette = null;
 	private BodyPart.MountPoint mountPoint = null;
 	
 	private Vec3d position = null;
@@ -81,17 +79,17 @@ public class Appendage {
 		return this;
 	}
 	
-	public ColorPalette getPalette() {
-		return palette;
+	public ColorPalette getColorPalette() {
+		return colorPalette;
 	}
 	
-	public ColorPalette resolvePalette() {
-		if(palette == null && preset != null) return preset.resolvePalette();
-		else return palette;
+	public ColorPalette resolveColorPalette() {
+		if(colorPalette == null && preset != null) return preset.resolveColorPalette();
+		else return colorPalette;
 	}
 	
-	public Appendage setPalette(ColorPalette palette) {
-		this.palette = palette;
+	public Appendage setColorPalette(ColorPalette colorPalette) {
+		this.colorPalette = colorPalette;
 		return this;
 	}
 	
@@ -172,7 +170,7 @@ public class Appendage {
 			.setName(getName() + " - Copy")
 			.setArtist(getArtist())
 			.setModel(getModel().copy())
-			.setPalette(getPalette().copy())
+			.setColorPalette(getColorPalette().copy())
 			.setMountPoint(getMountPoint())
 			.setPosition(getPosition())
 			.setRotation(getRotation())
@@ -186,7 +184,7 @@ public class Appendage {
 			.setName(resolveName())
 			.setArtist(resolveArtist())
 			.setModel(resolveModel())
-			.setPalette(resolvePalette())
+			.setColorPalette(resolveColorPalette())
 			.setMountPoint(resolveMountPoint())
 			.setPosition(resolvePosition())
 			.setRotation(resolveRotation())
@@ -198,7 +196,7 @@ public class Appendage {
 		if(name == null) name = "Untitled";
 		if(artist == null) artist = "Unknown Artist";
 		//if(model == null) //models are required
-		if(palette == null) palette = new ColorPalette(0);
+		if(colorPalette == null) colorPalette = new ColorPalette(0);
 		//if(mountPoint == null) //mount points are required
 		if(position == null) position = Vec3d.ZERO;
 		if(rotation == null) rotation = Vec3d.ZERO;

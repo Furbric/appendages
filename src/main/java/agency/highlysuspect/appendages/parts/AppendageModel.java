@@ -27,7 +27,7 @@ public abstract class AppendageModel {
 		
 		@Override
 		public AppendageModelRenderer bake(Outfit outfit, Appendage appendage) {
-			int color = appendage.resolvePalette().get(0).getColorInContext(outfit).orElse(0xFFFFFF);
+			int color = appendage.resolveColorPalette().get(0).getColorInContext(outfit).orElse(0xFFFFFF);
 			
 			return new AppendageItemStackModelRenderer(stack, color);
 		}

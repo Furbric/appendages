@@ -19,7 +19,7 @@ public class ColorPalette {
 	public final AppendageColor[] colors;
 	
 	public AppendageColor get(int id) {
-		if(id > colors.length) return AppendageColor.Unset.INST;
+		if(id >= colors.length) return AppendageColor.Unset.INST;
 		return colors[id];
 	}
 	

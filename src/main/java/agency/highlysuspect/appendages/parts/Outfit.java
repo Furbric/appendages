@@ -55,9 +55,6 @@ public class Outfit {
 	}
 	
 	public OutfitRenderer bake() {
-		Outfit hahaYes = Init.GSON.fromJson(Init.GSON.toJson(Init.GSON.fromJson(Init.GSON.toJson(this), Outfit.class)), Outfit.class);
-		Init.LOGGER.info(Init.GSON.toJson(hahaYes));
-		
-		return new OutfitRenderer(hahaYes.appendages.stream().flatMap(a -> a.flattened().bake(hahaYes)));
+		return new OutfitRenderer(appendages.stream().flatMap(a -> a.flattened().bake(this)));
 	}
 }
