@@ -1,25 +1,79 @@
 package agency.highlysuspect.appendages.parts;
 
+import agency.highlysuspect.appendages.parts.color.ColorPalette;
 import agency.highlysuspect.appendages.render.AppendageRenderer;
 import agency.highlysuspect.appendages.render.model.AppendageModelRenderer;
+import agency.highlysuspect.appendages.util.RegistryTypeAdapter;
 import com.google.common.base.Preconditions;
+import com.google.gson.annotations.JsonAdapter;
+import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.util.math.Vec3d;
 
 import java.util.stream.Stream;
 
 public class Appendage {
+	@JsonAdapter(RegistryTypeAdapter.App.class)
+	private Appendage preset;
+	
+	private String name = null;
+	private String artist = null;
+	
 	private AppendageModel model = null;
+	private ColorPalette palette = null;
 	private BodyPart.MountPoint mountPoint = null;
 	
-	private Vec3d position = Vec3d.ZERO;
-	private Vec3d rotation = Vec3d.ZERO;
-	private Vec3d scale = ONE;
-	private static final Vec3d ONE = new Vec3d(1, 1, 1);
+	private Vec3d position = null;
+	private Vec3d rotation = null;
+	private Vec3d scale = null;
 	
-	private boolean symmetrical;
+	private TriState symmetrical = TriState.DEFAULT;
+	
+	public Appendage getPreset() {
+		return preset;
+	}
+	
+	public Appendage setPreset(Appendage preset) {
+		this.preset = preset;
+		return this;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public String resolveName() {
+		if(name == null && preset != null) return preset.resolveName();
+		else return name;
+	}
+	
+	public Appendage setName(String name) {
+		this.name = name;
+		return this;
+	}
+	
+	public String getArtist() {
+		return artist;
+	}
+	
+	public String resolveArtist() {
+		if(artist == null && preset != null) return preset.resolveArtist();
+		else return artist;
+	}
+	
+	public Appendage setArtist(String artist) {
+		this.artist = artist;
+		return this;
+	}
 	
 	public AppendageModel getModel() {
 		return model;
+	}
+	
+	public AppendageModel resolveModel() {
+		if(model == null && preset != null) return preset.resolveModel();
+		else return model;
 	}
 	
 	public Appendage setModel(AppendageModel model) {
@@ -27,8 +81,27 @@ public class Appendage {
 		return this;
 	}
 	
+	public ColorPalette getPalette() {
+		return palette;
+	}
+	
+	public ColorPalette resolvePalette() {
+		if(palette == null && preset != null) return preset.resolvePalette();
+		else return palette;
+	}
+	
+	public Appendage setPalette(ColorPalette palette) {
+		this.palette = palette;
+		return this;
+	}
+	
 	public BodyPart.MountPoint getMountPoint() {
 		return mountPoint;
+	}
+	
+	public BodyPart.MountPoint resolveMountPoint() {
+		if(mountPoint == null && preset != null) return preset.resolveMountPoint();
+		else return mountPoint;
 	}
 	
 	public Appendage setMountPoint(BodyPart.MountPoint mountPoint) {
@@ -40,6 +113,11 @@ public class Appendage {
 		return position;
 	}
 	
+	public Vec3d resolvePosition() {
+		if(position == null && preset != null) return preset.resolvePosition();
+		else return position;
+	}
+	
 	public Appendage setPosition(Vec3d position) {
 		this.position = position;
 		return this;
@@ -49,13 +127,24 @@ public class Appendage {
 		return rotation;
 	}
 	
+	public Vec3d resolveRotation() {
+		if(rotation == null && preset != null) return preset.resolveRotation();
+		else return rotation;
+	}
+	
 	public Appendage setRotation(Vec3d rotation) {
 		this.rotation = rotation;
 		return this;
 	}
 	
+	//more like scalie, am i right
 	public Vec3d getScale() {
 		return scale;
+	}
+	
+	public Vec3d resolveScale() {
+		if(scale == null && preset != null) return preset.resolveScale();
+		else return scale;
 	}
 	
 	public Appendage setScale(Vec3d scale) {
@@ -63,23 +152,58 @@ public class Appendage {
 		return this;
 	}
 	
-	public boolean isSymmetrical() {
+	public TriState getSymmetrical() {
 		return symmetrical;
 	}
 	
-	public Appendage setSymmetrical(boolean symmetrical) {
+	public TriState resolveSymmetrical() {
+		if(symmetrical == TriState.DEFAULT && preset != null) return preset.resolveSymmetrical();
+		else return symmetrical;
+	}
+	
+	public Appendage setSymmetrical(TriState symmetrical) {
 		this.symmetrical = symmetrical;
 		return this;
 	}
 	
 	public Appendage copy() {
 		return new Appendage()
-			.setModel(getModel())
+			.setPreset(getPreset())
+			.setName(getName() + " - Copy")
+			.setArtist(getArtist())
+			.setModel(getModel().copy())
+			.setPalette(getPalette().copy())
 			.setMountPoint(getMountPoint())
 			.setPosition(getPosition())
 			.setRotation(getRotation())
 			.setScale(getScale())
-			.setSymmetrical(isSymmetrical());
+			.setSymmetrical(getSymmetrical());
+	}
+	
+	public Appendage flattened() {
+		return new Appendage()
+			.setPreset(getPreset())
+			.setName(resolveName())
+			.setArtist(resolveArtist())
+			.setModel(resolveModel())
+			.setPalette(resolvePalette())
+			.setMountPoint(resolveMountPoint())
+			.setPosition(resolvePosition())
+			.setRotation(resolveRotation())
+			.setScale(resolveScale())
+			.setSymmetrical(resolveSymmetrical());
+	}
+	
+	public void completeDefaultValues() {
+		if(name == null) name = "Untitled";
+		if(artist == null) artist = "Unknown Artist";
+		//if(model == null) //models are required
+		if(palette == null) palette = new ColorPalette(0);
+		//if(mountPoint == null) //mount points are required
+		if(position == null) position = Vec3d.ZERO;
+		if(rotation == null) rotation = Vec3d.ZERO;
+		if(scale == null) scale = new Vec3d(1, 1, 1);
+		if(symmetrical == TriState.DEFAULT) symmetrical = TriState.FALSE;
 	}
 	
 	public Stream<AppendageRenderer> bake(Outfit outfit) {
@@ -96,13 +220,16 @@ public class Appendage {
 			scale
 		);
 		
-		if(!isSymmetrical()) return Stream.of(renderer);
-		else return Stream.of(renderer, new AppendageRenderer(
-			appendageModelRenderer,
-			mountPoint.getMirrored(),
-			position.multiply(-1, 1, 1),
-			rotation.multiply(1, -1, -1),
-			scale.multiply(-1, 1, -1)
-		));
+		if(symmetrical == TriState.TRUE) {
+			return Stream.of(renderer, new AppendageRenderer(
+				appendageModelRenderer,
+				mountPoint.getMirrored(),
+				position.multiply(-1, 1, 1),
+				rotation.multiply(1, -1, -1),
+				scale.multiply(-1, 1, -1)
+			));
+		} else {
+			return Stream.of(renderer);
+		}
 	}
 }

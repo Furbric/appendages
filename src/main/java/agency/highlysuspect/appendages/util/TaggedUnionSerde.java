@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.gson.*;
+import net.minecraft.util.JsonHelper;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -23,15 +24,15 @@ public class TaggedUnionSerde<T> implements JsonSerializer<T>, JsonDeserializer<
 	
 	@Override
 	public JsonElement serialize(T src, Type typeOfSrc, JsonSerializationContext context) {
-		JsonElement elem = context.serialize(src);
-		Preconditions.checkArgument(elem instanceof JsonObject, "TaggedUnionSerde can't be used on things that don't serialize to json objects");
-		((JsonObject)elem).addProperty("type", typeLookup.get(src.getClass()));
-		return elem;
+		JsonObject obj = JsonHelper2.ensureType(context.serialize(src), JsonObject.class);
+		obj.addProperty("type", typeLookup.get(src.getClass()));
+		return obj;
 	}
 	
 	@Override
 	public T deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-		throw new IllegalStateException("NYI"); //TODO
+		JsonObject obj = JsonHelper2.ensureType(json, JsonObject.class);
+		return context.deserialize(obj, typeLookup.inverse().get(JsonHelper.getString(obj, "type")));
 	}
 	
 	@Retention(RetentionPolicy.RUNTIME)

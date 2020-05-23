@@ -1,0 +1,16 @@
+{
+  "name": "Test",
+  "artist": "quaternary",
+  "model": {
+    "type": "item_stack",
+    "item": "minecraft:bread"
+  },
+  "mount_point": {
+    "body_part": "torso",
+    "mount_point": "back"
+  },
+  "position": [2.5, 7, -1],
+  "rotation": [-10, -85, -10],
+  "scale": [1, 1, 1.2],
+  "symmetrical": true
+}

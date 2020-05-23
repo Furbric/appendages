@@ -1,7 +1,10 @@
 package agency.highlysuspect.appendages.util;
 
+import agency.highlysuspect.appendages.Init;
+import agency.highlysuspect.appendages.parts.Appendage;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -10,12 +13,8 @@ import java.io.IOException;
 import java.util.function.Supplier;
 
 public class RegistryTypeAdapter<T> extends TypeAdapter<T> {
-	private RegistryTypeAdapter(Supplier<Registry<T>> registryLookup) {
+	public RegistryTypeAdapter(Supplier<Registry<T>> registryLookup) {
 		this.registryLookup = registryLookup;
-	}
-	
-	public static <T> TypeAdapter<T> createNullSafe(Supplier<Registry<T>> registryLookup) {
-		return new RegistryTypeAdapter<>(registryLookup).nullSafe();
 	}
 	
 	private final Supplier<Registry<T>> registryLookup;
@@ -33,7 +32,16 @@ public class RegistryTypeAdapter<T> extends TypeAdapter<T> {
 	
 	@Override
 	public T read(JsonReader in) throws IOException {
-		//No need to null-check, both Registry#get and Identifier.tryParse pass nulls along
-		return registryLookup.get().get(Identifier.tryParse(in.nextString()));
+		if(in.peek() == JsonToken.NULL) {
+			in.nextNull();
+			return null;
+		} else return registryLookup.get().get(Identifier.tryParse(in.nextString()));
+	}
+	
+	//Need to refer to it in a .class annotation
+	public static class App extends RegistryTypeAdapter<Appendage> {
+		public App() {
+			super(Init.APPENDAGE_PRESET_REGISTRY::getRegistry);
+		}
 	}
 }

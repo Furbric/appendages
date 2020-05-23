@@ -1,42 +1,58 @@
 package agency.highlysuspect.appendages.resource;
 
 import com.google.gson.Gson;
-import net.fabricmc.fabric.api.resource.SimpleResourceReloadListener;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.profiler.Profiler;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.registry.SimpleRegistry;
 
 import java.lang.reflect.Type;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
+import java.util.ArrayList;
+import java.util.Collection;
 
-public class JsonRegistryLoader<T> extends JsonLoader<T> implements SimpleResourceReloadListener<Registry<T>> {
-	public JsonRegistryLoader(Type type, Gson gson, String folder, Identifier fabricId) {
-		super(type, gson, folder, fabricId);
+public class JsonRegistryLoader<T> implements SimpleSynchronousResourceReloadListener {
+	public JsonRegistryLoader(Type type, String folder, Identifier fabricId) {
+		this.type = type;
+		this.folder = folder;
+		this.fabricId = fabricId;
 	}
+	
+	private final Type type;
+	private final String folder;
+	private final Identifier fabricId;
+	private final ArrayList<Identifier> fabricDependencies = new ArrayList<>();
 	
 	private Registry<T> registry;
 	
 	@Override
-	public CompletableFuture<Registry<T>> load(ResourceManager manager, Profiler profiler, Executor executor) {
-		return super.loadJson(manager, profiler, executor).thenApplyAsync(map -> {
-			SimpleRegistry<T> registry = new SimpleRegistry<>();
-			map.forEach(registry::add);
-			return registry;
-		}, executor);
-	}
-	
-	@Override
-	public CompletableFuture<Void> apply(Registry<T> data, ResourceManager manager, Profiler profiler, Executor executor) {
-		return CompletableFuture.supplyAsync(() -> {
-			this.registry = data;
-			return null;
-		});
+	public void apply(ResourceManager manager) {
+		SimpleRegistry<T> newRegistry = new SimpleRegistry<>();
+		JsonLoaderUtil.<T>loadJson(manager, type, folder, newRegistry::add);
+		this.registry = newRegistry;
 	}
 	
 	public T get(Identifier id) {
 		return registry.get(id);
+	}
+	
+	public Registry<T> getRegistry() {
+		return registry;
+	}
+	
+	@Override
+	public Identifier getFabricId() {
+		return fabricId;
+	}
+	
+	@Override
+	public Collection<Identifier> getFabricDependencies() {
+		return fabricDependencies;
+	}
+	
+	//convenience method tbh
+	public JsonRegistryLoader<T> dependsOn(JsonRegistryLoader<?> other) {
+		fabricDependencies.add(other.getFabricId());
+		return this;
 	}
 }

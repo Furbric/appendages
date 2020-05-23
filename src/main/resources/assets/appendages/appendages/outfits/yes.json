@@ -1,0 +1,19 @@
+{
+  "name": "Yes",
+  "artist": "quaternary",
+  "appendages": [
+    {
+      "preset": "appendages:bread_wing"
+    },
+    {
+      "preset": "appendages:bread_wing",
+      "position": [5.5, 7, -1],
+      "color_palette": [
+        "#0"
+      ]
+    }
+  ],
+  "color_palette": [
+    [0, 128, 255]
+  ]
+}
